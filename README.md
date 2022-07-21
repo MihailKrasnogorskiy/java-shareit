@@ -1,2 +1,5 @@
 # java-shareit
-Template repository for Shareit project.
+Проект 4го модуля курса Java разработчик Яндекс.Практикум.
+
+
+Выполнил Красногорский Михаил mikser256@yandex.ru

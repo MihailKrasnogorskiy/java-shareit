@@ -1,4 +1,4 @@
-package ru.practicum.shareit.user;
+package ru.practicum.shareit.user.service;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -6,6 +6,9 @@ import ru.practicum.shareit.exception.EmailUsedException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
+import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.model.UserUpdate;
+import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -62,7 +65,8 @@ public class UserServiceImpl implements UserService {
      *
      * @param id - id пользователя из запроса
      */
-    private void validateUserId(long id) {
+    @Override
+    public void validateUserId(long id) {
         if (!repository.getAllUsersId().contains(id)) {
             throw new NotFoundException("User with id " + id + " not found");
         }

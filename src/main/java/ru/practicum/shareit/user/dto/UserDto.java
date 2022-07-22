@@ -4,7 +4,7 @@ import lombok.Builder;
 import lombok.Data;
 
 /**
- * класс Dto объекта пользователя
+ * класс Dto пользователя
  */
 @Builder
 @Data

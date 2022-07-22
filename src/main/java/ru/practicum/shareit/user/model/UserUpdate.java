@@ -1,4 +1,4 @@
-package ru.practicum.shareit.user;
+package ru.practicum.shareit.user.model;
 
 import lombok.Data;
 
@@ -15,6 +15,4 @@ public class UserUpdate {
     private String name;
     @Email
     private String email;
-
-
 }

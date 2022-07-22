@@ -1,6 +1,8 @@
-package ru.practicum.shareit.user;
+package ru.practicum.shareit.user.service;
 
 import ru.practicum.shareit.user.dto.UserDto;
+import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.model.UserUpdate;
 
 import java.util.List;
 
@@ -45,4 +47,6 @@ public interface UserService {
      * @param id - id пользователя
      */
     void deleteUser(long id);
+
+    void validateUserId(long id);
 }

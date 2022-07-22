@@ -57,4 +57,12 @@ public interface ItemRepository {
      * @return лист объектов доступных для аренды вещей, соответствующих запросу
      */
     List<Item> search(String text);
+
+    /**
+     * удаление вещи владельцем
+     *
+     * @param userId - id владельца
+     * @param itemId - id вещи
+     */
+    void delete(long userId, long itemId);
 }

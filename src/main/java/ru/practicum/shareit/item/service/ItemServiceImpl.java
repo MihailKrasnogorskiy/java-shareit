@@ -61,6 +61,13 @@ class ItemServiceImpl implements ItemService {
         return ItemMapper.toItemDto(repository.create(userId, ItemMapper.toItem(itemDto)));
     }
 
+    @Override
+    public void delete(long userId, long itemId) {
+        userService.validateUserId(userId);
+        validateItemId(itemId);
+        repository.delete(userId, itemId);
+    }
+
     /**
      * проверка существования вещи по id
      *

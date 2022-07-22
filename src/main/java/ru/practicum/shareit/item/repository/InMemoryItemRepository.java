@@ -11,8 +11,8 @@ import java.util.stream.Collectors;
 @Repository
 class InMemoryItemRepository implements ItemRepository {
 
-    private long id = 0;
     private final HashMap<Long, List<Item>> items = new HashMap<>();
+    private long id = 0;
 
     @Override
     public Item create(long userId, Item item) {
@@ -52,14 +52,7 @@ class InMemoryItemRepository implements ItemRepository {
 
     @Override
     public Item update(long userId, long itemId, ItemUpdate itemUpdate) {
-        if (!items.containsKey(userId)) {
-            throw new NotFoundException("This user with id " + userId + " doesn't have items");
-        }
-        Item item = items.get(userId).stream()
-                .filter(i -> i.getId() == itemId)
-                .findFirst()
-                .orElseThrow(() -> new NotFoundException("This user with id " + userId + " doesn't have item with id "
-                        + itemId));
+        Item item = getUserItemByItemId(userId, itemId);
         if (itemUpdate.getAvailable() != null) {
             if (!itemUpdate.getAvailable().equals(item.getAvailable())) {
                 item.setAvailable(itemUpdate.getAvailable());
@@ -88,6 +81,12 @@ class InMemoryItemRepository implements ItemRepository {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public void delete(long userId, long itemId) {
+        Item item = getUserItemByItemId(userId, itemId);
+        items.get(userId).remove(item);
+    }
+
     /**
      * метод генерации id
      *
@@ -95,5 +94,20 @@ class InMemoryItemRepository implements ItemRepository {
      */
     private long getId() {
         return ++id;
+    }
+
+    private void doUserHaveItems(long userId) {
+        if (!items.containsKey(userId)) {
+            throw new NotFoundException("This user with id " + userId + " doesn't have items");
+        }
+    }
+
+    private Item getUserItemByItemId(long userId, long itemId) {
+        doUserHaveItems(userId);
+        return items.get(userId).stream()
+                .filter(i -> i.getId() == itemId)
+                .findFirst()
+                .orElseThrow(() -> new NotFoundException("This user with id " + userId + " doesn't have item with id "
+                        + itemId));
     }
 }

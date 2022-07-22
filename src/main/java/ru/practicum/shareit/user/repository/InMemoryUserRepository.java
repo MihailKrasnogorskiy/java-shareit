@@ -2,6 +2,7 @@ package ru.practicum.shareit.user.repository;
 
 import org.springframework.stereotype.Repository;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.exception.UserNameIsBlankException;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.model.UserUpdate;
 
@@ -38,6 +39,9 @@ public class InMemoryUserRepository implements UserRepository {
             }
         }
         if (userUpdate.getName() != null) {
+            if(userUpdate.getName().equals("")){
+                throw new UserNameIsBlankException();
+            }
             if (!userUpdate.getName().equals(getById(id).getName()) && userUpdate.getName() != null) {
                 getById(id).setName(userUpdate.getName());
             }
@@ -69,6 +73,12 @@ public class InMemoryUserRepository implements UserRepository {
         return users.stream()
                 .map(User::getId)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public void clear() {
+        users.clear();
+        id = 0;
     }
 
     /**

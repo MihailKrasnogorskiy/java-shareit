@@ -61,4 +61,9 @@ public interface UserRepository {
      * @return список всех id пользователей
      */
     List<Long> getAllUsersId();
+
+    /**
+     * очищает хранилище и сбрасывает счётчик
+     */
+    void clear();
 }

@@ -82,4 +82,15 @@ public class ItemController {
     public List<ItemDto> search(@RequestParam String text) {
         return service.search(text);
     }
+
+    /**
+     * удаление вещи владельцем
+     *
+     * @param userId - id владельца
+     * @param itemId - id вещи
+     */
+    @DeleteMapping("{itemId}")
+    public void delete(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long itemId) {
+        service.delete(userId, itemId);
+    }
 }

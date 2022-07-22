@@ -11,7 +11,6 @@ import javax.validation.constraints.NotBlank;
 @Data
 public class UserUpdate {
     private long id;
-    @NotBlank
     private String name;
     @Email
     private String email;

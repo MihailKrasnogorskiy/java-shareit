@@ -1,5 +1,6 @@
 package ru.practicum.shareit.user.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.EmailUsedException;
@@ -17,6 +18,7 @@ import java.util.stream.Collectors;
  * реализация интерфейса сервиса пользователей
  */
 @Service
+@Slf4j
 public class UserServiceImpl implements UserService {
 
     private final UserRepository repository;
@@ -42,7 +44,7 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto update(long id, UserUpdate user) {
         validateUserId(id);
-        if (user.getEmail() != null && !user.getEmail().equals(repository.getById(id).getEmail())) {
+        if (user.getEmail() != null) {
             validateUserEmail(user.getEmail());
         }
         return UserMapper.toUserDto(repository.update(id, user));

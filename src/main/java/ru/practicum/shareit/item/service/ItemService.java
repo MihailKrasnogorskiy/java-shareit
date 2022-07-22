@@ -49,4 +49,12 @@ public interface ItemService {
      * @return dto объект созданой вещи
      */
     ItemDto create(long userId, ItemDto itemDto);
+
+    /**
+     * удаление вещи владельцем
+     *
+     * @param userId - id владельца
+     * @param itemId - id вещи
+     */
+    void delete(long userId, long itemId);
 }

@@ -1,7 +1,10 @@
 package ru.practicum.shareit.user.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -17,6 +20,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @AutoConfigureMockMvc
+@TestInstance(Lifecycle.PER_CLASS)
 class UserControllerTest {
     private User user = User.builder()
             .name("Voldemar")
@@ -145,5 +149,11 @@ class UserControllerTest {
         this.mockMvc.perform(delete("/users/1"))
                 .andExpect(status().isOk());
         assertTrue(controller.getAllUsers().isEmpty());
+    }
+
+    @BeforeEach
+    void restoreUser(){
+        user.setName("Voldemar");
+        user.setEmail("voldemar@mail.ru");
     }
 }

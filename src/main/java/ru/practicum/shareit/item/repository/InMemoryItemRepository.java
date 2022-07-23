@@ -47,6 +47,7 @@ class InMemoryItemRepository implements ItemRepository {
 
     @Override
     public List<Item> getAllByUserId(long userId) {
+        doUserHaveItems(userId);
         return items.get(userId);
     }
 
@@ -54,19 +55,13 @@ class InMemoryItemRepository implements ItemRepository {
     public Item update(long userId, long itemId, ItemUpdate itemUpdate) {
         Item item = getUserItemByItemId(userId, itemId);
         if (itemUpdate.getAvailable() != null) {
-            if (!itemUpdate.getAvailable().equals(item.getAvailable())) {
-                item.setAvailable(itemUpdate.getAvailable());
-            }
+            item.setAvailable(itemUpdate.getAvailable());
         }
         if (itemUpdate.getDescription() != null) {
-            if (!itemUpdate.getDescription().equals(item.getDescription())) {
-                item.setDescription(itemUpdate.getDescription());
-            }
+            item.setDescription(itemUpdate.getDescription());
         }
         if (itemUpdate.getName() != null) {
-            if (!itemUpdate.getName().equals(item.getName())) {
-                item.setName(itemUpdate.getName());
-            }
+            item.setName(itemUpdate.getName());
         }
         return item;
     }
@@ -75,9 +70,9 @@ class InMemoryItemRepository implements ItemRepository {
     public List<Item> search(String text) {
         return items.values().stream()
                 .flatMap(Collection::stream)
+                .filter(Item::getAvailable)
                 .filter(item -> (item.getName().toLowerCase(Locale.ROOT).contains(text.toLowerCase(Locale.ROOT)) ||
                         item.getDescription().toLowerCase(Locale.ROOT).contains(text.toLowerCase(Locale.ROOT))))
-                .filter(Item::getAvailable)
                 .collect(Collectors.toList());
     }
 
@@ -85,6 +80,12 @@ class InMemoryItemRepository implements ItemRepository {
     public void delete(long userId, long itemId) {
         Item item = getUserItemByItemId(userId, itemId);
         items.get(userId).remove(item);
+    }
+
+    @Override
+    public void clear() {
+        items.clear();
+        id = 0;
     }
 
     /**

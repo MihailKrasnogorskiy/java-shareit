@@ -7,8 +7,8 @@ import org.springframework.web.bind.annotation.ResponseStatus;
  * исключение выбрасываемое при попытке регистрации пользователя с уже зарегистрированным email
  */
 @ResponseStatus(HttpStatus.BAD_REQUEST)
-public class UserNameIsBlankException extends RuntimeException {
-    public UserNameIsBlankException() {
-        super("User name can not is blank");
+public class IsBlankException extends RuntimeException {
+    public IsBlankException(String massage) {
+        super(massage + " can not is blank");
     }
 }

@@ -65,4 +65,9 @@ public interface ItemRepository {
      * @param itemId - id вещи
      */
     void delete(long userId, long itemId);
+
+    /**
+     * очищает хранилище и сбрасывает счётчик
+     */
+    void clear();
 }

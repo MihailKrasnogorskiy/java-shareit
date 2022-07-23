@@ -1,7 +1,9 @@
 package ru.practicum.shareit.item.service;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.exception.IsBlankException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.dto.ItemMapper;
@@ -14,6 +16,7 @@ import java.util.List;
 import java.util.stream.Collectors;
 
 @Service
+@Slf4j
 class ItemServiceImpl implements ItemService {
     private final UserService userService;
     private final ItemRepository repository;
@@ -52,13 +55,23 @@ class ItemServiceImpl implements ItemService {
     public ItemDto update(long userId, long itemId, ItemUpdate itemUpdate) {
         userService.validateUserId(userId);
         validateItemId(itemId);
-        return ItemMapper.toItemDto(repository.update(userId, itemId, itemUpdate));
+        if (itemUpdate.getName() != null && itemUpdate.getName().equals("")) {
+            throw new IsBlankException("Item name");
+        }
+        if (itemUpdate.getDescription() != null && itemUpdate.getDescription().equals("")) {
+            throw new IsBlankException("Item description");
+        }
+        ItemDto itemDto = ItemMapper.toItemDto(repository.update(userId, itemId, itemUpdate));
+        log.info("Item with id {} has been updated", itemId);
+        return itemDto;
     }
 
     @Override
     public ItemDto create(long userId, ItemDto itemDto) {
         userService.validateUserId(userId);
-        return ItemMapper.toItemDto(repository.create(userId, ItemMapper.toItem(itemDto)));
+        ItemDto returnedItemDto = ItemMapper.toItemDto(repository.create(userId, ItemMapper.toItem(itemDto)));
+        log.info("Item with id {} has been created", returnedItemDto.getId());
+        return returnedItemDto;
     }
 
     @Override
@@ -66,6 +79,7 @@ class ItemServiceImpl implements ItemService {
         userService.validateUserId(userId);
         validateItemId(itemId);
         repository.delete(userId, itemId);
+        log.info("Item with id {} has been deleted", itemId);
     }
 
     /**

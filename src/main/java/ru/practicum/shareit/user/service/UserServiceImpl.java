@@ -38,7 +38,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto createUser(User user) {
         validateUserEmail(user.getEmail());
-        return UserMapper.toUserDto(repository.createUser(user));
+        UserDto userdto = UserMapper.toUserDto(repository.createUser(user));
+        log.info("User with id {} has been created", userdto.getId());
+        return userdto;
     }
 
     @Override
@@ -47,7 +49,9 @@ public class UserServiceImpl implements UserService {
         if (user.getEmail() != null) {
             validateUserEmail(user.getEmail());
         }
-        return UserMapper.toUserDto(repository.update(id, user));
+        UserDto userdto = UserMapper.toUserDto(repository.update(id, user));
+        log.info("User with id {} has been updated", userdto.getId());
+        return userdto;
     }
 
     @Override
@@ -60,6 +64,7 @@ public class UserServiceImpl implements UserService {
     public void deleteUser(long id) {
         validateUserId(id);
         repository.delete(id);
+        log.info("User with id {} has been deleted", id);
     }
 
     /**

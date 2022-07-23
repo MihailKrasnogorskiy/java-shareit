@@ -54,6 +54,9 @@ class ItemControllerTest {
     @Autowired
     ObjectMapper mapper;
 
+    /**
+     * возвращение всех вещей пользователя по id пользователя
+     */
     @Test
     void test06_getAllByUserId() throws Exception {
         repository.clear();
@@ -88,6 +91,9 @@ class ItemControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    /**
+     * возвращение вещи по id
+     */
     @Test
     void test07_getById() throws Exception {
         repository.clear();
@@ -99,6 +105,9 @@ class ItemControllerTest {
                 .andExpect(content().json(mapper.writeValueAsString(itemDto1)));
     }
 
+    /**
+     * обновление вещи
+     */
     @Test
     void test08_update() throws Exception {
         repository.clear();
@@ -142,6 +151,9 @@ class ItemControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    /**
+     * создание вещи
+     */
     @Test
     void test09_create() throws Exception {
         repository.clear();
@@ -179,6 +191,9 @@ class ItemControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    /**
+     * поиск вещей без учёта регистра в полях имя и описание
+     */
     @Test
     void test10_search() throws Exception {
         repository.clear();
@@ -208,7 +223,7 @@ class ItemControllerTest {
         this.mockMvc.perform(get("/items/search?text=aUdI")).andExpect(status().isOk())
                 .andExpect(content().json(mapper.writeValueAsString(list)));
         list.remove(1);
-        ItemUpdate itemUpdate=ItemUpdate.builder().available(false).build();
+        ItemUpdate itemUpdate = ItemUpdate.builder().available(false).build();
         this.mockMvc.perform(patch("/items/2").header("X-Sharer-User-Id", 1)
                         .content(mapper.writeValueAsString(itemUpdate))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -217,8 +232,11 @@ class ItemControllerTest {
                 .andExpect(content().json(mapper.writeValueAsString(list)));
     }
 
+    /**
+     * удаление пользователя
+     */
     @Test
-    void test11_delete() throws Exception{
+    void test11_delete() throws Exception {
         repository.clear();
         this.mockMvc.perform(post("/items").header("X-Sharer-User-Id", 1)
                         .content(mapper.writeValueAsString(itemDto))
@@ -232,9 +250,12 @@ class ItemControllerTest {
         this.mockMvc.perform(get("/items/1")).andExpect(status().isNotFound());
     }
 
+    /**
+     * создание окружения для тестов
+     */
     @BeforeAll
     void createEnvironment() throws Exception {
-       userRepository.clear();
+        userRepository.clear();
         this.mockMvc.perform(post("/users").content(mapper.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -244,6 +265,9 @@ class ItemControllerTest {
                 .andExpect(status().isOk());
     }
 
+    /**
+     * возвращение объектов в исходное состояние
+     */
     @BeforeEach
     void restoreItemsDto() {
         itemDto.setName("Машина");

@@ -9,7 +9,6 @@ import javax.validation.constraints.Email;
  */
 @Data
 public class UserUpdate {
-    private long id;
     private String name;
     @Email
     private String email;

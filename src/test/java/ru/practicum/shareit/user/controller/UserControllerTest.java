@@ -14,8 +14,8 @@ import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import static org.junit.jupiter.api.Assertions.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -35,7 +35,9 @@ class UserControllerTest {
     @Autowired
     ObjectMapper mapper;
 
-
+    /**
+     * возвращение списка всех пользователей
+     */
     @Test
     void test01_getAllUsers() throws Exception {
         repository.clear();
@@ -55,6 +57,9 @@ class UserControllerTest {
         assertEquals("mail@mail.com", controller.getAllUsers().get(1).getEmail());
     }
 
+    /**
+     * возвращение пользователя по id
+     */
     @Test
     void test02_getById() throws Exception {
         repository.clear();
@@ -70,6 +75,9 @@ class UserControllerTest {
                 .andExpect(status().isNotFound());
     }
 
+    /**
+     * создание пользователя
+     */
     @Test
     void test03_createUser() throws Exception {
         repository.clear();
@@ -92,6 +100,9 @@ class UserControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
+    /**
+     * обновление пользователя
+     */
     @Test
     void test04_updateUser() throws Exception {
         repository.clear();
@@ -125,8 +136,6 @@ class UserControllerTest {
                 .andExpect(status().isBadRequest());
         user.setName(null);
         user.setEmail("vasya@gmail.com");
-        repository.getAllUsersEmail().stream()
-                .forEach(System.out::println);
         this.mockMvc.perform(patch("/users/1").content(mapper.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isConflict());
@@ -136,6 +145,10 @@ class UserControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
     }
+
+    /**
+     * удаление пользователя
+     */
 
     @Test
     void test05_deleteUser() throws Exception {
@@ -151,8 +164,11 @@ class UserControllerTest {
         assertTrue(controller.getAllUsers().isEmpty());
     }
 
+    /**
+     * возвращение пользователя в исходное состояние
+     */
     @BeforeEach
-    void restoreUser(){
+    void restoreUser() {
         user.setName("Voldemar");
         user.setEmail("voldemar@mail.ru");
     }

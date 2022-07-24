@@ -22,7 +22,9 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @TestInstance(Lifecycle.PER_CLASS)
 class UserControllerTest {
-    private UserDto user = UserDto.builder()
+    @Autowired
+    ObjectMapper mapper;
+    private final UserDto user = UserDto.builder()
             .name("Voldemar")
             .email("voldemar@mail.ru")
             .build();
@@ -32,8 +34,6 @@ class UserControllerTest {
     private UserRepository repository;
     @Autowired
     private MockMvc mockMvc;
-    @Autowired
-    ObjectMapper mapper;
 
     /**
      * возвращение списка всех пользователей

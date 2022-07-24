@@ -15,7 +15,6 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.ItemUpdate;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.ArrayList;
@@ -29,16 +28,20 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @TestInstance(Lifecycle.PER_CLASS)
 class ItemControllerTest {
-    private UserDto user = UserDto.builder()
+    @Autowired
+    UserRepository userRepository;
+    @Autowired
+    ObjectMapper mapper;
+    private final UserDto user = UserDto.builder()
             .name("Voldemar")
             .email("voldemar@mail.ru")
             .build();
-    private ItemDto itemDto = ItemDto.builder()
+    private final ItemDto itemDto = ItemDto.builder()
             .name("Машина")
             .description("Audi TT")
             .available(true)
             .build();
-    private ItemDto itemDto1 = ItemDto.builder()
+    private final ItemDto itemDto1 = ItemDto.builder()
             .id(1)
             .name("Машина")
             .description("Audi TT")
@@ -49,11 +52,7 @@ class ItemControllerTest {
     @Autowired
     private ItemRepository repository;
     @Autowired
-    UserRepository userRepository;
-    @Autowired
     private MockMvc mockMvc;
-    @Autowired
-    ObjectMapper mapper;
 
     /**
      * возвращение всех вещей пользователя по id пользователя

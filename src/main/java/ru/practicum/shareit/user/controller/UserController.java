@@ -3,7 +3,6 @@ package ru.practicum.shareit.user.controller;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.model.UserUpdate;
 import ru.practicum.shareit.user.service.UserService;
 
@@ -30,8 +29,8 @@ public class UserController {
      * @return список dto объектов пользователей
      */
     @GetMapping
-    public List<UserDto> getAllUsers() {
-        return service.getAllUsers();
+    public List<UserDto> getAll() {
+        return service.getAll();
     }
 
     /**
@@ -48,12 +47,12 @@ public class UserController {
     /**
      * создание пользователя
      *
-     * @param user - объект пользователя
+     * @param userDto - объект пользователя
      * @return dto объект пользователя
      */
     @PostMapping
-    public UserDto createUser(@Valid @RequestBody User user) {
-        return service.createUser(user);
+    public UserDto create(@Valid @RequestBody UserDto userDto) {
+        return service.create(userDto);
     }
 
     /**
@@ -63,7 +62,7 @@ public class UserController {
      * @return dto объект пользователя
      */
     @PatchMapping("/{id}")
-    public UserDto updateUser(@PathVariable long id, @Valid @RequestBody UserUpdate user) {
+    public UserDto update(@PathVariable long id, @Valid @RequestBody UserUpdate user) {
         return service.update(id, user);
     }
 
@@ -73,8 +72,8 @@ public class UserController {
      * @param id - id пользователя
      */
     @DeleteMapping("/{id}")
-    public void deleteUser(@PathVariable long id) {
-        service.deleteUser(id);
+    public void delete(@PathVariable long id) {
+        service.delete(id);
     }
 
 }

@@ -14,6 +14,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.ItemUpdate;
 import ru.practicum.shareit.item.repository.ItemRepository;
+import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -28,7 +29,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @TestInstance(Lifecycle.PER_CLASS)
 class ItemControllerTest {
-    private User user = User.builder()
+    private UserDto user = UserDto.builder()
             .name("Voldemar")
             .email("voldemar@mail.ru")
             .build();

@@ -7,7 +7,6 @@ import ru.practicum.shareit.exception.EmailUsedException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
-import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.model.UserUpdate;
 import ru.practicum.shareit.user.repository.UserRepository;
 
@@ -29,16 +28,16 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public List<UserDto> getAllUsers() {
-        return repository.getAllUsers().stream()
+    public List<UserDto> getAll() {
+        return repository.getAll().stream()
                 .map(UserMapper::toUserDto)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public UserDto createUser(User user) {
-        validateUserEmail(user.getEmail());
-        UserDto userdto = UserMapper.toUserDto(repository.createUser(user));
+    public UserDto create(UserDto userDto) {
+        validateUserEmail(userDto.getEmail());
+        UserDto userdto = UserMapper.toUserDto(repository.create(UserMapper.toUser(userDto)));
         log.info("User with id {} has been created", userdto.getId());
         return userdto;
     }
@@ -61,7 +60,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    public void deleteUser(long id) {
+    public void delete(long id) {
         validateUserId(id);
         repository.delete(id);
         log.info("User with id {} has been deleted", id);

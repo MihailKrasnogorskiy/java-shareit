@@ -39,14 +39,14 @@ public interface UserRepository {
      * @param user - объект пользователя
      * @return объект пользователя
      */
-    User createUser(User user);
+    User create(User user);
 
     /**
      * возвращение списка всех пользователей
      *
      * @return список всех пользователей
      */
-    List<User> getAllUsers();
+    List<User> getAll();
 
     /**
      * возвращает список всех имэйлов пользователей

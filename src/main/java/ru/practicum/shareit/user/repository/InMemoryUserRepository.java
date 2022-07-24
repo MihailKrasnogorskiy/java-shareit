@@ -50,14 +50,14 @@ public class InMemoryUserRepository implements UserRepository {
     }
 
     @Override
-    public User createUser(User user) {
+    public User create(User user) {
         user.setId(getId());
         users.add(user);
         return user;
     }
 
     @Override
-    public List<User> getAllUsers() {
+    public List<User> getAll() {
         return users;
     }
 

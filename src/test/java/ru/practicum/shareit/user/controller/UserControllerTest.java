@@ -10,7 +10,7 @@ import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMock
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import static org.junit.jupiter.api.Assertions.*;
@@ -22,7 +22,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @TestInstance(Lifecycle.PER_CLASS)
 class UserControllerTest {
-    private User user = User.builder()
+    private UserDto user = UserDto.builder()
             .name("Voldemar")
             .email("voldemar@mail.ru")
             .build();
@@ -41,20 +41,20 @@ class UserControllerTest {
     @Test
     void test01_getAllUsers() throws Exception {
         repository.clear();
-        assertTrue(controller.getAllUsers().isEmpty());
+        assertTrue(controller.getAll().isEmpty());
         this.mockMvc.perform(post("/users").content(mapper.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-        assertFalse(controller.getAllUsers().isEmpty());
-        assertEquals(1, controller.getAllUsers().size());
-        assertEquals("Voldemar", controller.getAllUsers().get(0).getName());
+        assertFalse(controller.getAll().isEmpty());
+        assertEquals(1, controller.getAll().size());
+        assertEquals("Voldemar", controller.getAll().get(0).getName());
         user.setEmail("mail@mail.com");
         this.mockMvc.perform(post("/users").content(mapper.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-        assertEquals(2, controller.getAllUsers().size());
-        assertEquals("Voldemar", controller.getAllUsers().get(0).getName());
-        assertEquals("mail@mail.com", controller.getAllUsers().get(1).getEmail());
+        assertEquals(2, controller.getAll().size());
+        assertEquals("Voldemar", controller.getAll().get(0).getName());
+        assertEquals("mail@mail.com", controller.getAll().get(1).getEmail());
     }
 
     /**
@@ -84,8 +84,8 @@ class UserControllerTest {
         this.mockMvc.perform(post("/users").content(mapper.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-        assertEquals(1, controller.getAllUsers().size());
-        assertEquals("Voldemar", controller.getAllUsers().get(0).getName());
+        assertEquals(1, controller.getAll().size());
+        assertEquals("Voldemar", controller.getAll().get(0).getName());
         this.mockMvc.perform(post("/users").content(mapper.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isConflict());
@@ -114,8 +114,8 @@ class UserControllerTest {
         this.mockMvc.perform(patch("/users/1").content(mapper.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-        assertFalse(controller.getAllUsers().isEmpty());
-        assertEquals(1, controller.getAllUsers().size());
+        assertFalse(controller.getAll().isEmpty());
+        assertEquals(1, controller.getAll().size());
         assertEquals(1, controller.getById(1).getId());
         assertEquals("Vasya", controller.getById(1).getName());
         assertEquals("voldemar@mail.ru", controller.getById(1).getEmail());
@@ -124,8 +124,8 @@ class UserControllerTest {
         this.mockMvc.perform(patch("/users/1").content(mapper.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-        assertFalse(controller.getAllUsers().isEmpty());
-        assertEquals(1, controller.getAllUsers().size());
+        assertFalse(controller.getAll().isEmpty());
+        assertEquals(1, controller.getAll().size());
         assertEquals(1, controller.getById(1).getId());
         assertEquals("Vasya", controller.getById(1).getName());
         assertEquals("vasya@gmail.com", controller.getById(1).getEmail());
@@ -161,7 +161,7 @@ class UserControllerTest {
         assertEquals("voldemar@mail.ru", controller.getById(1).getEmail());
         this.mockMvc.perform(delete("/users/1"))
                 .andExpect(status().isOk());
-        assertTrue(controller.getAllUsers().isEmpty());
+        assertTrue(controller.getAll().isEmpty());
     }
 
     /**

@@ -21,4 +21,18 @@ public class UserMapper {
                 .email(user.getEmail())
                 .build();
     }
+
+    /**
+     * метод для создания объекта пользователя из Dto объекта
+     *
+     * @param userDto - dto объект
+     * @return - объект пользователя
+     */
+    public static User toUser(UserDto userDto) {
+        return User.builder()
+                .id(userDto.getId())
+                .name(userDto.getName())
+                .email(userDto.getEmail())
+                .build();
+    }
 }

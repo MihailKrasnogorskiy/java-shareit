@@ -1,24 +1,24 @@
-package ru.practicum.shareit.item.model;
+package ru.practicum.shareit.user.model;
 
 import lombok.Builder;
 import lombok.Data;
 
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
 /**
- * класс сдаваемой в аренду вещи
+ * класс пользователя
  */
-@Data
 @Builder
-public class Item {
+@Data
+public class User {
+
     private long id;
     @NotNull
     @NotBlank
     private String name;
-    private String description;
+    @Email
     @NotNull
-    private Boolean available;
-    private long owner;
-    private long requestId;
+    private String email;
 }

@@ -2,6 +2,7 @@ package ru.practicum.shareit.user.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.EmailUsedException;
 import ru.practicum.shareit.exception.NotFoundException;
@@ -40,14 +41,16 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto create(UserDto userDto) {
-        validateUserEmail(userDto.getEmail());
+        try{
         UserDto userdto = UserMapper.toUserDto(repository.save(UserMapper.toUser(userDto)));
         log.info("User with id {} has been created", userdto.getId());
-        return userdto;
+        return userdto;} catch (DataIntegrityViolationException e) {
+            throw new EmailUsedException("This email is already use");
+        }
     }
 
     @Override
-    public UserDto update(long id, UserUpdate user) {
+    public UserDto update(Long id, UserUpdate user) {
         validateUserId(id);
         if (user.getEmail() != null) {
             validateUserEmail(user.getEmail());

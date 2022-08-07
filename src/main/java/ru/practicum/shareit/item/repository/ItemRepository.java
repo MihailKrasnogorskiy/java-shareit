@@ -22,7 +22,7 @@ public interface ItemRepository extends CrudRepository<Item, Long> {
      * @param userId - id владельца вещей
      * @return лист всех вещей пользователя
      */
-    List<Item> findByOwner(long userId);
+    List<Item> findByOwner_id(long userId);
 
 
     /**

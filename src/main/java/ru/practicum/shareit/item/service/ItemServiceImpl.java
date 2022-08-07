@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.IsBlankException;
 import ru.practicum.shareit.exception.NotFoundException;
@@ -21,25 +22,28 @@ import java.util.stream.Collectors;
 class ItemServiceImpl implements ItemService {
     private final UserService userService;
     private final ItemRepository repository;
+    @Lazy
+    private final ItemMapper itemMapper;
 
     @Autowired
-    public ItemServiceImpl(UserService userService, ItemRepository repository) {
+    public ItemServiceImpl(UserService userService, ItemRepository repository, ItemMapper itemMapper) {
         this.userService = userService;
         this.repository = repository;
+        this.itemMapper = itemMapper;
     }
 
     @Override
     public List<ItemDto> getAllByUserId(long userId) {
         userService.validateUserId(userId);
-        return repository.findByOwner(userId).stream()
-                .map(ItemMapper::toItemDto)
+        return repository.findByOwner_id(userId).stream()
+                .map(itemMapper::toItemDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public ItemDto getById(long id) {
         validateItemId(id);
-        return ItemMapper.toItemDto(repository.findById(id).get());
+        return itemMapper.toItemDto(repository.findById(id).get());
     }
 
     @Override
@@ -48,7 +52,7 @@ class ItemServiceImpl implements ItemService {
             return new ArrayList<>();
         }
         return repository.search(text).stream()
-                .map(ItemMapper::toItemDto)
+                .map(itemMapper::toItemDto)
                 .collect(Collectors.toList());
     }
 
@@ -71,7 +75,7 @@ class ItemServiceImpl implements ItemService {
         if (itemUpdate.getAvailable() != null) {
             item.setAvailable(itemUpdate.getAvailable());
         }
-        ItemDto itemDto = ItemMapper.toItemDto(repository.save(item));
+        ItemDto itemDto = itemMapper.toItemDto(repository.save(item));
         log.info("Item with id {} has been updated", itemId);
         return itemDto;
     }
@@ -80,7 +84,7 @@ class ItemServiceImpl implements ItemService {
     public ItemDto create(long userId, ItemDto itemDto) {
         userService.validateUserId(userId);
         itemDto.setOwner(userId);
-        ItemDto returnedItemDto = ItemMapper.toItemDto(repository.save(ItemMapper.toItem(itemDto)));
+        ItemDto returnedItemDto = itemMapper.toItemDto(repository.save(itemMapper.toItem(itemDto)));
         log.info("Item with id {} has been created", returnedItemDto.getId());
         return returnedItemDto;
     }
@@ -114,7 +118,7 @@ class ItemServiceImpl implements ItemService {
 
     private void doUserHaveThisItems(long userId, long itemId) {
         doUserHaveItems(userId);
-        List<Item> items = new ArrayList<>(repository.findByOwner(userId));
+        List<Item> items = new ArrayList<>(repository.findByOwner_id(userId));
         items.stream()
                 .filter(i -> i.getId() == itemId)
                 .findFirst()

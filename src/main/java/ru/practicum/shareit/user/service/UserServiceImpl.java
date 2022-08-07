@@ -41,10 +41,11 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto create(UserDto userDto) {
-        try{
-        UserDto userdto = UserMapper.toUserDto(repository.save(UserMapper.toUser(userDto)));
-        log.info("User with id {} has been created", userdto.getId());
-        return userdto;} catch (DataIntegrityViolationException e) {
+        try {
+            UserDto userdto = UserMapper.toUserDto(repository.save(UserMapper.toUser(userDto)));
+            log.info("User with id {} has been created", userdto.getId());
+            return userdto;
+        } catch (DataIntegrityViolationException e) {
             throw new EmailUsedException("This email is already use");
         }
     }
@@ -56,10 +57,10 @@ public class UserServiceImpl implements UserService {
             validateUserEmail(user.getEmail());
         }
         User userInDB = repository.findById(id).get();
-        if(user.getName() != null){
+        if (user.getName() != null) {
             userInDB.setName(user.getName());
         }
-        if(user.getEmail() != null){
+        if (user.getEmail() != null) {
             userInDB.setEmail(user.getEmail());
         }
         UserDto userdto = UserMapper.toUserDto(repository.save(userInDB));

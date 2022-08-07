@@ -13,7 +13,8 @@ import java.util.List;
 public interface UserRepository extends CrudRepository<User, Long> {
     @Transactional
     @Query("select u.id from User as u")
-   List<Long> getAllUsersId();
+    List<Long> getAllUsersId();
+
     @Transactional
     @Query("select u.email from User as u")
     List<String> getAllUsersEmail();

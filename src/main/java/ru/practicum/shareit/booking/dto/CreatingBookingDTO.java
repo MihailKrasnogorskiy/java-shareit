@@ -12,6 +12,6 @@ public class CreatingBookingDTO {
     @Future
     private LocalDate start;
     private LocalDate end;
-    private Long item;
+    private Long itemId;
     private Long booker;
 }

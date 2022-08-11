@@ -28,7 +28,7 @@ public class Booking {
     @ManyToOne
     @JoinColumn(name = "booker_id", referencedColumnName = "id")
     private User booker;
-    private BookingStatus status = BookingStatus.WAITING;
+    private BookingStatus status;
 
     public Booking() {
 

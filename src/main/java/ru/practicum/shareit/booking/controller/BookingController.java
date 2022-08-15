@@ -4,9 +4,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.CreatingBookingDTO;
+import ru.practicum.shareit.booking.model.BookingState;
 import ru.practicum.shareit.booking.service.BookingService;
 
 import javax.validation.Valid;
+import java.util.List;
 
 /**
  * // TODO .
@@ -36,5 +38,11 @@ public class BookingController {
     @GetMapping("/{bookingId}")
     public BookingDto findById(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long bookingId) {
         return service.findById(userId, bookingId);
+    }
+
+    @GetMapping
+    public List<BookingDto> findAllByUser(@RequestHeader("X-Sharer-User-Id") long userId,
+                                          @RequestParam(defaultValue = "ALL") BookingState state) {
+        return service.findAllByUser(userId, state);
     }
 }

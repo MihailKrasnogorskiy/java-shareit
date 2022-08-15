@@ -7,6 +7,7 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.dto.CreatingBookingDTO;
 import ru.practicum.shareit.booking.model.Booking;
+import ru.practicum.shareit.booking.model.BookingState;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.repository.BookingRepository;
 import ru.practicum.shareit.exception.*;
@@ -15,6 +16,8 @@ import ru.practicum.shareit.user.service.UserService;
 
 import javax.transaction.Transactional;
 import javax.validation.Valid;
+import java.util.List;
+import java.util.stream.Collectors;
 
 @Service
 @Slf4j
@@ -80,6 +83,19 @@ public class BookingServiceImpl implements BookingService {
         } else {
             return mapper.toBookingDto(booking);
         }
+    }
+
+    @Override
+    public List<BookingDto> findAllByUser(long userId, BookingState state) {
+        userService.validateUserId(userId);
+        List<Booking> list = repository.findByBooker_id(userId);
+        if (list.isEmpty()) {
+            new NotFoundException("This user hasn't bookings");
+        }
+        return repository.findByBooker_id(userId).stream()
+                .map(mapper::toBookingDto)
+                .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
+                .collect(Collectors.toList());
     }
 
     private void validationEndDate(CreatingBookingDTO bookingDto) {

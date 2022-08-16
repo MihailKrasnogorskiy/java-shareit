@@ -1,11 +1,14 @@
 package ru.practicum.shareit.booking.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.CreatingBookingDTO;
 import ru.practicum.shareit.booking.model.BookingState;
 import ru.practicum.shareit.booking.service.BookingService;
+import ru.practicum.shareit.exception.ErrorResponse;
+import ru.practicum.shareit.exception.UnknownBookingStateException;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -42,7 +45,16 @@ public class BookingController {
 
     @GetMapping
     public List<BookingDto> findAllByUser(@RequestHeader("X-Sharer-User-Id") long userId,
-                                          @RequestParam(defaultValue = "ALL") BookingState state) {
+                                          @RequestParam(defaultValue = "all") BookingState state) {
+        if (state.equals(BookingState.UNSUPPORTED_STATUS)) {
+            throw new UnknownBookingStateException();
+        }
         return service.findAllByUser(userId, state);
+    }
+
+    @ExceptionHandler
+    @ResponseStatus(HttpStatus.BAD_REQUEST)
+    public ErrorResponse handleIncorrectParameterException(final UnknownBookingStateException e) {
+        return new ErrorResponse(e.getMessage());
     }
 }

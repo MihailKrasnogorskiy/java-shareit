@@ -42,6 +42,9 @@ public class BookingServiceImpl implements BookingService {
         validationEndDate(bookingDto);
         userService.validateUserId(userId);
         bookingDto.setBooker(userId);
+        if(itemService.getById(bookingDto.getItemId()).getOwner()==userId){
+            throw new NotFoundException("You cannot book your item");
+        }
         if (!itemService.getById(bookingDto.getItemId()).getAvailable()) {
             throw new ItemUnavailableException();
         }
@@ -59,6 +62,8 @@ public class BookingServiceImpl implements BookingService {
         userService.validateUserId(userId);
         if (booking.getItem().getOwner().getId() != userId) {
             throw new OwnerValidationException();
+        } else if (!booking.getStatus().equals(BookingStatus.WAITING)) {
+            throw new BookingApprovedException();
         } else if (approved) {
             booking.setStatus(BookingStatus.APPROVED);
             repository.save(booking);
@@ -92,10 +97,57 @@ public class BookingServiceImpl implements BookingService {
         if (list.isEmpty()) {
             new NotFoundException("This user hasn't bookings");
         }
-        return repository.findByBooker_id(userId).stream()
-                .map(mapper::toBookingDto)
-                .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
-                .collect(Collectors.toList());
+        if (state.equals(BookingState.ALL)) {
+            return repository.findByBooker_id(userId).stream()
+                    .map(mapper::toBookingDto)
+                    .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
+                    .collect(Collectors.toList());
+        } else if (state.equals(BookingState.REJECTED)) {
+            return repository.findByBooker_idAndStatus(userId, BookingStatus.REJECTED).stream()
+                    .map(mapper::toBookingDto)
+                    .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
+                    .collect(Collectors.toList());
+        }else if (state.equals(BookingState.WAITING)) {
+            return repository.findByBooker_idAndStatus(userId, BookingStatus.WAITING).stream()
+                    .map(mapper::toBookingDto)
+                    .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
+                    .collect(Collectors.toList());
+        } else {
+            return repository.findByBooker_id(userId).stream()
+                    .map(mapper::toBookingDto)
+                    .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
+                    .collect(Collectors.toList());
+        }
+    }
+
+    @Override
+    public List<BookingDto> findAllByOwner(long ownerId, BookingState state) {
+        userService.validateUserId(ownerId);
+        List<Booking> list = repository.findByOwnerId(ownerId);
+        if (list.isEmpty()) {
+            new NotFoundException("This user hasn't bookings");
+        }
+        if (state.equals(BookingState.ALL)) {
+            return repository.findByOwnerId(ownerId).stream()
+                    .map(mapper::toBookingDto)
+                    .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
+                    .collect(Collectors.toList());
+        } else if (state.equals(BookingState.REJECTED)) {
+            return repository.findByOwnerIdAndStatus(ownerId, BookingStatus.REJECTED.toString()).stream()
+                    .map(mapper::toBookingDto)
+                    .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
+                    .collect(Collectors.toList());
+        }else if (state.equals(BookingState.WAITING)) {
+            return repository.findByOwnerIdAndStatus(ownerId, BookingStatus.WAITING.toString()).stream()
+                    .map(mapper::toBookingDto)
+                    .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
+                    .collect(Collectors.toList());
+        } else {
+            return repository.findByOwnerId(ownerId).stream()
+                    .map(mapper::toBookingDto)
+                    .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
+                    .collect(Collectors.toList());
+        }
     }
 
     private void validationEndDate(CreatingBookingDTO bookingDto) {

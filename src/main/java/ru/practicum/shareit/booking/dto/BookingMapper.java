@@ -9,9 +9,6 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import java.time.LocalDate;
-import java.time.LocalDateTime;
-
 @Component
 public class BookingMapper {
 
@@ -36,7 +33,7 @@ public class BookingMapper {
                 .build();
     }
 
-    public BookingDto toBookingDto(Booking booking){
+    public BookingDto toBookingDto(Booking booking) {
         return BookingDto.builder()
                 .id(booking.getId())
                 .start(booking.getStart())

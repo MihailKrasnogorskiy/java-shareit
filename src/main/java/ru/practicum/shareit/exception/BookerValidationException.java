@@ -6,7 +6,7 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 /**
  * исключение выбрасываемое при попытке поодтвердить или отклонить бронь не владельцем вещи
  */
-@ResponseStatus(HttpStatus.BAD_REQUEST)
+@ResponseStatus(HttpStatus.NOT_FOUND)
 public class BookerValidationException extends RuntimeException {
     public BookerValidationException() {
         super("You are not booker");

@@ -52,6 +52,15 @@ public class BookingController {
         return service.findAllByUser(userId, state);
     }
 
+    @GetMapping("/owner")
+    public List<BookingDto> findAllByOwner(@RequestHeader("X-Sharer-User-Id") long ownerId,
+                                          @RequestParam(defaultValue = "all") BookingState state) {
+        if (state.equals(BookingState.UNSUPPORTED_STATUS)) {
+            throw new UnknownBookingStateException();
+        }
+        return service.findAllByOwner(ownerId, state);
+    }
+
     @ExceptionHandler
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     public ErrorResponse handleIncorrectParameterException(final UnknownBookingStateException e) {

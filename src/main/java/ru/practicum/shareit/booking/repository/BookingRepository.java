@@ -9,7 +9,9 @@ import java.util.List;
 
 public interface BookingRepository extends CrudRepository<Booking, Long> {
     List<Booking> findByBooker_id(long bookerId);
+
     List<Booking> findByBooker_idAndStatus(long bookerId, BookingStatus status);
+
     @Query(value = "select * from bookings as b join items as i on b.item_id=i.id where i.owner_id = ?1",
             nativeQuery = true)
     List<Booking> findByOwnerId(long ownerId);
@@ -19,4 +21,5 @@ public interface BookingRepository extends CrudRepository<Booking, Long> {
             nativeQuery = true)
     List<Booking> findByOwnerIdAndStatus(long ownerId, String status);
 
+    List<Booking> findByItem_id(long itemId);
 }

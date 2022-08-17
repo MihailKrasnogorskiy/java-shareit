@@ -2,7 +2,9 @@ package ru.practicum.shareit.item.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.CreatingItemDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemDtoWithBooking;
 import ru.practicum.shareit.item.model.ItemUpdate;
 import ru.practicum.shareit.item.service.ItemService;
 
@@ -31,7 +33,7 @@ public class ItemController {
      * @return лист dto всех вещей пользователя
      */
     @GetMapping
-    public List<ItemDto> getAllByUserId(@RequestHeader("X-Sharer-User-Id") long userId) {
+    public List<ItemDtoWithBooking> getAllByUserId(@RequestHeader("X-Sharer-User-Id") long userId) {
         return service.getAllByUserId(userId);
     }
 
@@ -42,8 +44,8 @@ public class ItemController {
      * @return dto объект вещи
      */
     @GetMapping("/{itemId}")
-    public ItemDto getById(@PathVariable long itemId) {
-        return service.getById(itemId);
+    public ItemDto getById(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long itemId) {
+        return service.getById(itemId, userId);
     }
 
     /**
@@ -68,7 +70,7 @@ public class ItemController {
      * @return dto объект созданой вещи
      */
     @PostMapping
-    public ItemDto create(@RequestHeader("X-Sharer-User-Id") long userId, @Valid @RequestBody ItemDto itemDto) {
+    public ItemDto create(@RequestHeader("X-Sharer-User-Id") long userId, @Valid @RequestBody CreatingItemDto itemDto) {
         return service.create(userId, itemDto);
     }
 

@@ -25,7 +25,7 @@ public class ItemMapper {
                 .build();
     }
 
-    public Item toItem(ItemDto itemDto) {
+    public Item toItem(CreatingItemDto itemDto) {
         Item item = Item.builder()
                 .name(itemDto.getName())
                 .description(itemDto.getDescription())
@@ -33,5 +33,10 @@ public class ItemMapper {
                 .build();
         item.setOwner(userRepository.findById(itemDto.getOwner()).get());
         return item;
+    }
+
+    public ItemDtoWithBooking toItemDtoWithBooking(ItemDto item) {
+        return new ItemDtoWithBooking(item.getId(), item.getName(), item.getDescription(), item.getAvailable(),
+                item.getOwner(), item.getRequestId());
     }
 }

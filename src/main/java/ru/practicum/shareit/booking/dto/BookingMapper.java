@@ -12,9 +12,9 @@ import ru.practicum.shareit.user.repository.UserRepository;
 @Component
 public class BookingMapper {
 
-    private ItemRepository itemRepository;
-    private UserRepository userRepository;
-    private ItemMapper itemMapper;
+    private final ItemRepository itemRepository;
+    private final UserRepository userRepository;
+    private final ItemMapper itemMapper;
 
     @Autowired
     public BookingMapper(ItemRepository itemRepository, UserRepository userRepository, ItemMapper itemMapper) {

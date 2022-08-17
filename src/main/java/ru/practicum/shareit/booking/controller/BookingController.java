@@ -54,7 +54,7 @@ public class BookingController {
 
     @GetMapping("/owner")
     public List<BookingDto> findAllByOwner(@RequestHeader("X-Sharer-User-Id") long ownerId,
-                                          @RequestParam(defaultValue = "all") BookingState state) {
+                                           @RequestParam(defaultValue = "all") BookingState state) {
         if (state.equals(BookingState.UNSUPPORTED_STATUS)) {
             throw new UnknownBookingStateException();
         }

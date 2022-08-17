@@ -4,15 +4,20 @@ import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.exception.IsBlankException;
 import ru.practicum.shareit.exception.NotFoundException;
+import ru.practicum.shareit.item.dto.CreatingItemDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.dto.ItemDtoWithBooking;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.model.ItemUpdate;
 import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.service.UserService;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -21,6 +26,9 @@ import java.util.stream.Collectors;
 @Slf4j
 class ItemServiceImpl implements ItemService {
     private final UserService userService;
+    @Autowired
+    @Lazy
+    private BookingService bookingService;
     private final ItemRepository repository;
     @Lazy
     private final ItemMapper itemMapper;
@@ -33,17 +41,35 @@ class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> getAllByUserId(long userId) {
+    public List<ItemDtoWithBooking> getAllByUserId(long userId) {
         userService.validateUserId(userId);
         return repository.findByOwner_id(userId).stream()
                 .map(itemMapper::toItemDto)
+                .map(itemMapper::toItemDtoWithBooking)
                 .collect(Collectors.toList());
     }
 
     @Override
-    public ItemDto getById(long id) {
+    public ItemDto getById(long id, long userId) {
         validateItemId(id);
-        return itemMapper.toItemDto(repository.findById(id).get());
+        userService.validateUserId(userId);
+        ItemDto itemDto = itemMapper.toItemDto(repository.findById(id).get());
+        if (itemDto.getOwner() == userId) {
+            ItemDtoWithBooking itemDtoWithBooking = itemMapper.toItemDtoWithBooking(itemDto);
+            System.out.println(itemDto);
+            System.out.println(itemDtoWithBooking);
+            List<BookingDto> bookings = bookingService.findAllByItemId(id);
+            for (int i = bookings.size()-1; i > 0; i--) {
+                if (bookings.get(i).getStart().isAfter(LocalDateTime.now())) {
+                    itemDtoWithBooking.setNextBooking(bookings.get(i));
+                    if (i != bookings.size()-1) {
+                        itemDtoWithBooking.setLastBooking(bookings.get(i + 1));
+                    }
+                }
+            }
+            return itemDtoWithBooking;
+        }
+        return itemDto;
     }
 
     @Override
@@ -51,9 +77,7 @@ class ItemServiceImpl implements ItemService {
         if (text.equals("")) {
             return new ArrayList<>();
         }
-        return repository.search(text).stream()
-                .map(itemMapper::toItemDto)
-                .collect(Collectors.toList());
+        return repository.search(text).stream().map(itemMapper::toItemDto).collect(Collectors.toList());
     }
 
     @Override
@@ -81,7 +105,7 @@ class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto create(long userId, ItemDto itemDto) {
+    public ItemDto create(long userId, CreatingItemDto itemDto) {
         userService.validateUserId(userId);
         itemDto.setOwner(userId);
         ItemDto returnedItemDto = itemMapper.toItemDto(repository.save(itemMapper.toItem(itemDto)));
@@ -119,10 +143,6 @@ class ItemServiceImpl implements ItemService {
     private void doUserHaveThisItems(long userId, long itemId) {
         doUserHaveItems(userId);
         List<Item> items = new ArrayList<>(repository.findByOwner_id(userId));
-        items.stream()
-                .filter(i -> i.getId() == itemId)
-                .findFirst()
-                .orElseThrow(() -> new NotFoundException("This user with id " + userId + " doesn't have item with id "
-                        + itemId));
+        items.stream().filter(i -> i.getId() == itemId).findFirst().orElseThrow(() -> new NotFoundException("This user with id " + userId + " doesn't have item with id " + itemId));
     }
 }

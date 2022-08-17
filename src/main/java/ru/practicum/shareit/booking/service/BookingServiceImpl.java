@@ -2,6 +2,7 @@ package ru.practicum.shareit.booking.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingMapper;
@@ -29,7 +30,8 @@ public class BookingServiceImpl implements BookingService {
     private final BookingMapper mapper;
 
     @Autowired
-    public BookingServiceImpl(BookingRepository repository, UserService userService, ItemService itemService, BookingMapper mapper) {
+    public BookingServiceImpl(BookingRepository repository, UserService userService, ItemService itemService,
+                              BookingMapper mapper) {
         this.repository = repository;
         this.userService = userService;
         this.itemService = itemService;
@@ -38,14 +40,14 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public BookingDto create(long userId, @Valid CreatingBookingDTO bookingDto) {
+    public BookingDto create(long userId, CreatingBookingDTO bookingDto) {
         validationEndDate(bookingDto);
         userService.validateUserId(userId);
         bookingDto.setBooker(userId);
-        if(itemService.getById(bookingDto.getItemId()).getOwner()==userId){
+        if (itemService.getById(bookingDto.getItemId(), userId).getOwner() == userId) {
             throw new NotFoundException("You cannot book your item");
         }
-        if (!itemService.getById(bookingDto.getItemId()).getAvailable()) {
+        if (!itemService.getById(bookingDto.getItemId(), userId).getAvailable()) {
             throw new ItemUnavailableException();
         }
         Booking booking = mapper.toBooking(bookingDto);
@@ -107,7 +109,7 @@ public class BookingServiceImpl implements BookingService {
                     .map(mapper::toBookingDto)
                     .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
                     .collect(Collectors.toList());
-        }else if (state.equals(BookingState.WAITING)) {
+        } else if (state.equals(BookingState.WAITING)) {
             return repository.findByBooker_idAndStatus(userId, BookingStatus.WAITING).stream()
                     .map(mapper::toBookingDto)
                     .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
@@ -133,12 +135,13 @@ public class BookingServiceImpl implements BookingService {
                     .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
                     .collect(Collectors.toList());
         } else if (state.equals(BookingState.REJECTED)) {
-            return repository.findByOwnerIdAndStatus(ownerId, BookingStatus.REJECTED.toString()).stream()
+            System.out.println(BookingStatus.REJECTED);
+            return repository.findByOwnerIdAndStatus(ownerId, "REJECTED").stream()
                     .map(mapper::toBookingDto)
                     .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
                     .collect(Collectors.toList());
-        }else if (state.equals(BookingState.WAITING)) {
-            return repository.findByOwnerIdAndStatus(ownerId, BookingStatus.WAITING.toString()).stream()
+        } else if (state.equals(BookingState.WAITING)) {
+            return repository.findByOwnerIdAndStatus(ownerId, "WAITING").stream()
                     .map(mapper::toBookingDto)
                     .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
                     .collect(Collectors.toList());
@@ -148,6 +151,14 @@ public class BookingServiceImpl implements BookingService {
                     .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
                     .collect(Collectors.toList());
         }
+    }
+
+    @Override
+    public List<BookingDto> findAllByItemId(long itemId) {
+        return repository.findByItem_id(itemId).stream()
+                .map(mapper::toBookingDto)
+                .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
+                .collect(Collectors.toList());
     }
 
     private void validationEndDate(CreatingBookingDTO bookingDto) {

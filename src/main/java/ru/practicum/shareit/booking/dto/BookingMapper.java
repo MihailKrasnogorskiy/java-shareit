@@ -23,12 +23,12 @@ public class BookingMapper {
         this.itemMapper = itemMapper;
     }
 
-    public Booking toBooking(CreatingBookingDTO bookingDTO) {
+    public Booking toBooking(CreatingBookingDto bookingDto) {
         return Booking.builder()
-                .start(bookingDTO.getStart())
-                .end(bookingDTO.getEnd())
-                .item(itemRepository.findById(bookingDTO.getItemId()).get())
-                .booker(userRepository.findById(bookingDTO.getBooker()).get())
+                .start(bookingDto.getStart())
+                .end(bookingDto.getEnd())
+                .item(itemRepository.findById(bookingDto.getItemId()).get())
+                .booker(userRepository.findById(bookingDto.getBooker()).get())
                 .status(BookingStatus.WAITING)
                 .build();
     }
@@ -41,6 +41,17 @@ public class BookingMapper {
                 .item(itemMapper.toItemDto(booking.getItem()))
                 .booker(UserMapper.toUserDto(booking.getBooker()))
                 .status(booking.getStatus())
+                .build();
+    }
+
+    public BookingDtoForItemDto toBookingForItemDto(BookingDto bookingDto) {
+        return BookingDtoForItemDto.builder()
+                .id(bookingDto.getId())
+                .start(bookingDto.getStart())
+                .end(bookingDto.getEnd())
+                .itemId(bookingDto.getItem().getId())
+                .bookerId(bookingDto.getBooker().getId())
+                .status(bookingDto.getStatus())
                 .build();
     }
 }

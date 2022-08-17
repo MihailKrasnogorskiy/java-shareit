@@ -22,10 +22,12 @@ public class ItemMapper {
                 .description(item.getDescription())
                 .available(item.getAvailable())
                 .owner(item.getOwner().getId())
+                .lastBooking(null)
+                .nextBooking(null)
                 .build();
     }
 
-    public Item toItem(CreatingItemDto itemDto) {
+    public Item toItem(ItemDto itemDto) {
         Item item = Item.builder()
                 .name(itemDto.getName())
                 .description(itemDto.getDescription())
@@ -33,10 +35,5 @@ public class ItemMapper {
                 .build();
         item.setOwner(userRepository.findById(itemDto.getOwner()).get());
         return item;
-    }
-
-    public ItemDtoWithBooking toItemDtoWithBooking(ItemDto item) {
-        return new ItemDtoWithBooking(item.getId(), item.getName(), item.getDescription(), item.getAvailable(),
-                item.getOwner(), item.getRequestId());
     }
 }

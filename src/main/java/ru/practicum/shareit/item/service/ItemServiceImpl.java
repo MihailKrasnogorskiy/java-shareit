@@ -5,12 +5,11 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDto;
+import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.exception.IsBlankException;
 import ru.practicum.shareit.exception.NotFoundException;
-import ru.practicum.shareit.item.dto.CreatingItemDto;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemDtoWithBooking;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.item.model.ItemUpdate;
@@ -32,20 +31,24 @@ class ItemServiceImpl implements ItemService {
     private final ItemRepository repository;
     @Lazy
     private final ItemMapper itemMapper;
+    @Lazy
+    private final BookingMapper bookingMapper;
 
     @Autowired
-    public ItemServiceImpl(UserService userService, ItemRepository repository, ItemMapper itemMapper) {
+    public ItemServiceImpl(UserService userService, ItemRepository repository, ItemMapper itemMapper, BookingMapper bookingMapper) {
         this.userService = userService;
         this.repository = repository;
         this.itemMapper = itemMapper;
+        this.bookingMapper = bookingMapper;
     }
 
     @Override
-    public List<ItemDtoWithBooking> getAllByUserId(long userId) {
+    public List<ItemDto> getAllByUserId(long userId) {
         userService.validateUserId(userId);
         return repository.findByOwner_id(userId).stream()
                 .map(itemMapper::toItemDto)
-                .map(itemMapper::toItemDtoWithBooking)
+                .map(this::fillBookingInItemDto)
+                .sorted((o1, o2) ->  (int) (o1.getId()- o2.getId()))
                 .collect(Collectors.toList());
     }
 
@@ -55,19 +58,7 @@ class ItemServiceImpl implements ItemService {
         userService.validateUserId(userId);
         ItemDto itemDto = itemMapper.toItemDto(repository.findById(id).get());
         if (itemDto.getOwner() == userId) {
-            ItemDtoWithBooking itemDtoWithBooking = itemMapper.toItemDtoWithBooking(itemDto);
-            System.out.println(itemDto);
-            System.out.println(itemDtoWithBooking);
-            List<BookingDto> bookings = bookingService.findAllByItemId(id);
-            for (int i = bookings.size()-1; i > 0; i--) {
-                if (bookings.get(i).getStart().isAfter(LocalDateTime.now())) {
-                    itemDtoWithBooking.setNextBooking(bookings.get(i));
-                    if (i != bookings.size()-1) {
-                        itemDtoWithBooking.setLastBooking(bookings.get(i + 1));
-                    }
-                }
-            }
-            return itemDtoWithBooking;
+            return fillBookingInItemDto(itemDto);
         }
         return itemDto;
     }
@@ -105,7 +96,7 @@ class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public ItemDto create(long userId, CreatingItemDto itemDto) {
+    public ItemDto create(long userId, ItemDto itemDto) {
         userService.validateUserId(userId);
         itemDto.setOwner(userId);
         ItemDto returnedItemDto = itemMapper.toItemDto(repository.save(itemMapper.toItem(itemDto)));
@@ -144,5 +135,19 @@ class ItemServiceImpl implements ItemService {
         doUserHaveItems(userId);
         List<Item> items = new ArrayList<>(repository.findByOwner_id(userId));
         items.stream().filter(i -> i.getId() == itemId).findFirst().orElseThrow(() -> new NotFoundException("This user with id " + userId + " doesn't have item with id " + itemId));
+    }
+
+    private ItemDto fillBookingInItemDto(ItemDto itemDto) {
+        long itemId = itemDto.getId();
+        List<BookingDto> bookings = bookingService.findAllByItemId(itemId);
+        for (int i = bookings.size() - 1; i >= 0; i--) {
+            if (bookings.get(i).getStart().isAfter(LocalDateTime.now())) {
+                itemDto.setNextBooking(bookingMapper.toBookingForItemDto(bookings.get(i)));
+                if (i != bookings.size() - 1) {
+                    itemDto.setLastBooking(bookingMapper.toBookingForItemDto(bookings.get(i + 1)));
+                }
+            }
+        }
+        return itemDto;
     }
 }

@@ -2,11 +2,10 @@ package ru.practicum.shareit.booking.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.context.annotation.Lazy;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingMapper;
-import ru.practicum.shareit.booking.dto.CreatingBookingDTO;
+import ru.practicum.shareit.booking.dto.CreatingBookingDto;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingState;
 import ru.practicum.shareit.booking.model.BookingStatus;
@@ -16,7 +15,7 @@ import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.service.UserService;
 
 import javax.transaction.Transactional;
-import javax.validation.Valid;
+import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -40,7 +39,7 @@ public class BookingServiceImpl implements BookingService {
 
     @Override
     @Transactional
-    public BookingDto create(long userId, CreatingBookingDTO bookingDto) {
+    public BookingDto create(long userId, CreatingBookingDto bookingDto) {
         validationEndDate(bookingDto);
         userService.validateUserId(userId);
         bookingDto.setBooker(userId);
@@ -95,13 +94,28 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<BookingDto> findAllByUser(long userId, BookingState state) {
         userService.validateUserId(userId);
-        List<Booking> list = repository.findByBooker_id(userId);
-        if (list.isEmpty()) {
-            new NotFoundException("This user hasn't bookings");
-        }
         if (state.equals(BookingState.ALL)) {
             return repository.findByBooker_id(userId).stream()
                     .map(mapper::toBookingDto)
+                    .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
+                    .collect(Collectors.toList());
+        } else if (state.equals(BookingState.PAST)) {
+            return repository.findByBooker_id(userId).stream()
+                    .map(mapper::toBookingDto)
+                    .filter(b -> b.getEnd().isBefore(LocalDateTime.now()))
+                    .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
+                    .collect(Collectors.toList());
+        } else if (state.equals(BookingState.FUTURE)) {
+            return repository.findByBooker_id(userId).stream()
+                    .map(mapper::toBookingDto)
+                    .filter(b -> b.getStart().isAfter(LocalDateTime.now()))
+                    .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
+                    .collect(Collectors.toList());
+        } else if (state.equals(BookingState.CURRENT)) {
+            return repository.findByBooker_id(userId).stream()
+                    .map(mapper::toBookingDto)
+                    .filter(b -> b.getStart().isBefore(LocalDateTime.now()))
+                    .filter(b -> b.getEnd().isAfter(LocalDateTime.now()))
                     .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
                     .collect(Collectors.toList());
         } else if (state.equals(BookingState.REJECTED)) {
@@ -125,17 +139,31 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<BookingDto> findAllByOwner(long ownerId, BookingState state) {
         userService.validateUserId(ownerId);
-        List<Booking> list = repository.findByOwnerId(ownerId);
-        if (list.isEmpty()) {
-            new NotFoundException("This user hasn't bookings");
-        }
         if (state.equals(BookingState.ALL)) {
             return repository.findByOwnerId(ownerId).stream()
                     .map(mapper::toBookingDto)
                     .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
                     .collect(Collectors.toList());
+        } else if (state.equals(BookingState.PAST)) {
+            return repository.findByOwnerId(ownerId).stream()
+                    .map(mapper::toBookingDto)
+                    .filter(b -> b.getEnd().isBefore(LocalDateTime.now()))
+                    .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
+                    .collect(Collectors.toList());
+        } else if (state.equals(BookingState.FUTURE)) {
+            return repository.findByOwnerId(ownerId).stream()
+                    .map(mapper::toBookingDto)
+                    .filter(b -> b.getStart().isAfter(LocalDateTime.now()))
+                    .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
+                    .collect(Collectors.toList());
+        } else if (state.equals(BookingState.CURRENT)) {
+            return repository.findByOwnerId(ownerId).stream()
+                    .map(mapper::toBookingDto)
+                    .filter(b -> b.getStart().isBefore(LocalDateTime.now()))
+                    .filter(b -> b.getEnd().isAfter(LocalDateTime.now()))
+                    .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
+                    .collect(Collectors.toList());
         } else if (state.equals(BookingState.REJECTED)) {
-            System.out.println(BookingStatus.REJECTED);
             return repository.findByOwnerIdAndStatus(ownerId, "REJECTED").stream()
                     .map(mapper::toBookingDto)
                     .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
@@ -161,7 +189,7 @@ public class BookingServiceImpl implements BookingService {
                 .collect(Collectors.toList());
     }
 
-    private void validationEndDate(CreatingBookingDTO bookingDto) {
+    private void validationEndDate(CreatingBookingDto bookingDto) {
         if (bookingDto.getStart().isAfter(bookingDto.getEnd())) {
             throw new EndDateValidateException();
         }

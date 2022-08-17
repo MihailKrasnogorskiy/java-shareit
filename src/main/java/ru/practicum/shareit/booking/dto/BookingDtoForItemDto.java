@@ -2,16 +2,17 @@ package ru.practicum.shareit.booking.dto;
 
 import lombok.Builder;
 import lombok.Data;
+import ru.practicum.shareit.booking.model.BookingStatus;
 
-import javax.validation.constraints.FutureOrPresent;
 import java.time.LocalDateTime;
 
 @Data
 @Builder
-public class CreatingBookingDTO {
-    @FutureOrPresent
+public class BookingDtoForItemDto {
+    private long id;
     private LocalDateTime start;
     private LocalDateTime end;
-    private Long itemId;
-    private Long booker;
+    private long itemId;
+    private long bookerId;
+    private BookingStatus status;
 }

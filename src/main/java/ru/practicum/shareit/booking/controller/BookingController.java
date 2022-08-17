@@ -4,7 +4,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
-import ru.practicum.shareit.booking.dto.CreatingBookingDTO;
+import ru.practicum.shareit.booking.dto.CreatingBookingDto;
 import ru.practicum.shareit.booking.model.BookingState;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.exception.ErrorResponse;
@@ -28,7 +28,7 @@ public class BookingController {
 
     @PostMapping
     public BookingDto create(@RequestHeader("X-Sharer-User-Id") long userId,
-                             @Valid @RequestBody CreatingBookingDTO bookingDto) {
+                             @Valid @RequestBody CreatingBookingDto bookingDto) {
         return service.create(userId, bookingDto);
     }
 

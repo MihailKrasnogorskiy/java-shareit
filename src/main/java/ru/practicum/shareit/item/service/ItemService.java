@@ -1,8 +1,6 @@
 package ru.practicum.shareit.item.service;
 
-import ru.practicum.shareit.item.dto.CreatingItemDto;
 import ru.practicum.shareit.item.dto.ItemDto;
-import ru.practicum.shareit.item.dto.ItemDtoWithBooking;
 import ru.practicum.shareit.item.model.ItemUpdate;
 
 import java.util.List;
@@ -15,7 +13,7 @@ public interface ItemService {
      * @param userId - id владельца вещей
      * @return лист dto всех вещей пользователя
      */
-    List<ItemDtoWithBooking> getAllByUserId(long userId);
+    List<ItemDto> getAllByUserId(long userId);
 
     /**
      * поиск вещи по id
@@ -50,7 +48,7 @@ public interface ItemService {
      * @param itemDto - dto объект создаваемой вещи
      * @return dto объект созданой вещи
      */
-    ItemDto create(long userId, CreatingItemDto itemDto);
+    ItemDto create(long userId, ItemDto itemDto);
 
     /**
      * удаление вещи владельцем

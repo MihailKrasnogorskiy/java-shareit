@@ -2,6 +2,7 @@ package ru.practicum.shareit.item.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.web.bind.annotation.*;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.ItemUpdate;
 import ru.practicum.shareit.item.service.ItemService;
@@ -93,4 +94,10 @@ public class ItemController {
     public void delete(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long itemId) {
         service.delete(userId, itemId);
     }
+@PostMapping ("{itemId}/comment")
+    public CommentDto addComment(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long itemId,
+                                 @Valid @RequestBody CommentDto comment){
+      return service.addComment(userId, itemId, comment);
+
+}
 }

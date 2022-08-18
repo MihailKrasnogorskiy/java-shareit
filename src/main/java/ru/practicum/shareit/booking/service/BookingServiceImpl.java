@@ -16,6 +16,7 @@ import ru.practicum.shareit.user.service.UserService;
 
 import javax.transaction.Transactional;
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -129,10 +130,7 @@ public class BookingServiceImpl implements BookingService {
                     .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
                     .collect(Collectors.toList());
         } else {
-            return repository.findByBooker_id(userId).stream()
-                    .map(mapper::toBookingDto)
-                    .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
-                    .collect(Collectors.toList());
+            return new ArrayList<>();
         }
     }
 
@@ -174,10 +172,7 @@ public class BookingServiceImpl implements BookingService {
                     .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
                     .collect(Collectors.toList());
         } else {
-            return repository.findByOwnerId(ownerId).stream()
-                    .map(mapper::toBookingDto)
-                    .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
-                    .collect(Collectors.toList());
+            return new ArrayList<>();
         }
     }
 

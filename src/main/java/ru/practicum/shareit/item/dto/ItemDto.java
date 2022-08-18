@@ -8,6 +8,8 @@ import ru.practicum.shareit.booking.dto.BookingDtoForItemDto;
 
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
+import java.util.HashSet;
+import java.util.Set;
 
 /**
  * класс Dto сдаваемой в аренду вещи
@@ -28,4 +30,5 @@ public class ItemDto {
     private long requestId;
     private BookingDtoForItemDto lastBooking;
     private BookingDtoForItemDto nextBooking;
+    private Set<CommentDto> comments = new HashSet<>();
 }

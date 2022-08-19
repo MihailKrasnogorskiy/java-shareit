@@ -32,7 +32,7 @@ public interface ItemRepository extends CrudRepository<Item, Long> {
      * @return лист объектов доступных для аренды вещей, соответствующих запросу
      */
     @Query(" select i from Item as i " +
-            "where upper(i.name) like upper(concat('%', ?1, '%'))" +
+            "where upper(i.name) like upper(concat('%', ?1, '%')) and i.available = true" +
             "   or upper(i.description) like upper(concat('%', ?1, '%')) and i.available = true")
     List<Item> search(String text);
 

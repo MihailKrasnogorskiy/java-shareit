@@ -32,17 +32,16 @@ import java.util.stream.Collectors;
 @Slf4j
 class ItemServiceImpl implements ItemService {
     private final UserService userService;
-    @Autowired
-    @Lazy
-    private BookingService bookingService;
     private final ItemRepository repository;
-
     private final CommentRepository commentRepository;
     @Lazy
     private final ItemMapper itemMapper;
     @Lazy
     private final BookingMapper bookingMapper;
     private final CommentMapper commentMapper;
+    @Autowired
+    @Lazy
+    private BookingService bookingService;
 
     @Autowired
     public ItemServiceImpl(UserService userService, ItemRepository repository, CommentRepository commentRepository,
@@ -187,7 +186,7 @@ class ItemServiceImpl implements ItemService {
         return itemDto;
     }
 
-    private ItemDto addCommentsToItemDto(ItemDto itemDto){
+    private ItemDto addCommentsToItemDto(ItemDto itemDto) {
         commentRepository.findByItemId(itemDto.getId()).stream()
                 .map(commentMapper::toCommentDto)
                 .forEach(itemDto.getComments()::add);

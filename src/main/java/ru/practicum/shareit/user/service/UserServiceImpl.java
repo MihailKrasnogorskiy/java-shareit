@@ -5,6 +5,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.EmailUsedException;
+import ru.practicum.shareit.exception.IsBlankException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
@@ -41,6 +42,7 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public UserDto create(UserDto userDto) {
+        userDto.setId(0L);
         try {
             UserDto userdto = UserMapper.toUserDto(repository.save(UserMapper.toUser(userDto)));
             log.info("User with id {} has been created", userdto.getId());
@@ -58,6 +60,9 @@ public class UserServiceImpl implements UserService {
         }
         User userInDB = repository.findById(id).get();
         if (user.getName() != null) {
+            if (user.getName().isBlank()) {
+                throw new IsBlankException("Username");
+            }
             userInDB.setName(user.getName());
         }
         if (user.getEmail() != null) {

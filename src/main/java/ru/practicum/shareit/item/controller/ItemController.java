@@ -94,10 +94,11 @@ public class ItemController {
     public void delete(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long itemId) {
         service.delete(userId, itemId);
     }
-@PostMapping ("{itemId}/comment")
-    public CommentDto addComment(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long itemId,
-                                 @Valid @RequestBody CommentDto comment){
-      return service.addComment(userId, itemId, comment);
 
-}
+    @PostMapping("{itemId}/comment")
+    public CommentDto addComment(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long itemId,
+                                 @Valid @RequestBody CommentDto comment) {
+        return service.addComment(userId, itemId, comment);
+
+    }
 }

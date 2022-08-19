@@ -5,13 +5,12 @@ import org.springframework.stereotype.Component;
 import ru.practicum.shareit.item.model.Item;
 import ru.practicum.shareit.user.repository.UserRepository;
 
-import java.util.ArrayList;
 import java.util.HashSet;
 
 @Component
 public class ItemMapper {
     private final UserRepository userRepository;
-    private CommentMapper commentMapper;
+    private final CommentMapper commentMapper;
 
     @Autowired
     public ItemMapper(UserRepository userRepository, CommentMapper commentMapper) {

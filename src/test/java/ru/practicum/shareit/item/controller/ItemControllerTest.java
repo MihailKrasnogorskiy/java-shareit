@@ -10,14 +10,16 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.ItemUpdate;
-import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.ArrayList;
+import java.util.HashSet;
 import java.util.List;
 
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -28,10 +30,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @TestInstance(Lifecycle.PER_CLASS)
 class ItemControllerTest {
-    @Autowired
-    UserRepository userRepository;
-    @Autowired
-    ObjectMapper mapper;
     private final UserDto user = UserDto.builder()
             .name("Voldemar")
             .email("voldemar@mail.ru")
@@ -40,6 +38,8 @@ class ItemControllerTest {
             .name("Машина")
             .description("Audi TT")
             .available(true)
+            .owner(1)
+            .comments(new HashSet<>())
             .build();
     private final ItemDto itemDto1 = ItemDto.builder()
             .id(1)
@@ -48,18 +48,25 @@ class ItemControllerTest {
             .available(true)
             .owner(1)
             .requestId(0)
+            .comments(new HashSet<>())
             .build();
     @Autowired
-    private ItemRepository repository;
+    UserRepository userRepository;
+    @Autowired
+    ObjectMapper mapper;
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
 
     /**
      * возвращение всех вещей пользователя по id пользователя
      */
     @Test
+    @Transactional
     void test06_getAllByUserId() throws Exception {
-        repository.clear();
+        clear();
         this.mockMvc.perform(post("/items").header("X-Sharer-User-Id", 1)
                         .content(mapper.writeValueAsString(itemDto))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -82,26 +89,31 @@ class ItemControllerTest {
                 .available(true)
                 .owner(1)
                 .requestId(0)
+                .comments(new HashSet<>())
                 .build();
         list.add(itemDto2);
         this.mockMvc.perform(get("/items").header("X-Sharer-User-Id", 1))
                 .andExpect(status().isOk())
                 .andExpect(content().json(mapper.writeValueAsString(list)));
+        list.clear();
         this.mockMvc.perform(get("/items").header("X-Sharer-User-Id", 2))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isOk())
+                .andExpect(content().json(mapper.writeValueAsString(list)));
     }
 
     /**
      * возвращение вещи по id
      */
     @Test
+    @Transactional
     void test07_getById() throws Exception {
-        repository.clear();
+        clear();
         this.mockMvc.perform(post("/items").header("X-Sharer-User-Id", 1)
                         .content(mapper.writeValueAsString(itemDto))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-        this.mockMvc.perform(get("/items/1")).andExpect(status().isOk())
+        this.mockMvc.perform(get("/items/1").header("X-Sharer-User-Id", 1))
+                .andExpect(status().isOk())
                 .andExpect(content().json(mapper.writeValueAsString(itemDto1)));
     }
 
@@ -109,8 +121,9 @@ class ItemControllerTest {
      * обновление вещи
      */
     @Test
+    @Transactional
     void test08_update() throws Exception {
-        repository.clear();
+        clear();
         this.mockMvc.perform(post("/items").header("X-Sharer-User-Id", 1)
                         .content(mapper.writeValueAsString(itemDto))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -155,8 +168,9 @@ class ItemControllerTest {
      * создание вещи
      */
     @Test
+    @Transactional
     void test09_create() throws Exception {
-        repository.clear();
+        clear();
         this.mockMvc.perform(post("/items").header("X-Sharer-User-Id", 1)
                         .content(mapper.writeValueAsString(itemDto))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -195,8 +209,9 @@ class ItemControllerTest {
      * поиск вещей без учёта регистра в полях имя и описание
      */
     @Test
+    @Transactional
     void test10_search() throws Exception {
-        repository.clear();
+        clear();
         this.mockMvc.perform(post("/items").header("X-Sharer-User-Id", 1)
                         .content(mapper.writeValueAsString(itemDto))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -213,6 +228,7 @@ class ItemControllerTest {
                 .available(true)
                 .owner(1)
                 .requestId(0)
+                .comments(new HashSet<>())
                 .build();
         list.add(itemDto2);
         this.mockMvc.perform(post("/items").header("X-Sharer-User-Id", 1)
@@ -236,8 +252,9 @@ class ItemControllerTest {
      * удаление пользователя
      */
     @Test
+    @Transactional
     void test11_delete() throws Exception {
-        repository.clear();
+        clear();
         this.mockMvc.perform(post("/items").header("X-Sharer-User-Id", 1)
                         .content(mapper.writeValueAsString(itemDto))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -247,7 +264,8 @@ class ItemControllerTest {
                 .andExpect(status().isNotFound());
         this.mockMvc.perform(delete("/items/1").header("X-Sharer-User-Id", 1))
                 .andExpect(status().isOk());
-        this.mockMvc.perform(get("/items/1")).andExpect(status().isNotFound());
+        this.mockMvc.perform(get("/items/1").header("X-Sharer-User-Id", 1))
+                .andExpect(status().isNotFound());
     }
 
     /**
@@ -255,7 +273,9 @@ class ItemControllerTest {
      */
     @BeforeAll
     void createEnvironment() throws Exception {
-        userRepository.clear();
+        clear();
+        String query = "ALTER TABLE users ALTER COLUMN id RESTART WITH 1";
+        jdbcTemplate.update(query);
         this.mockMvc.perform(post("/users").content(mapper.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -276,5 +296,10 @@ class ItemControllerTest {
         itemDto1.setName("Машина");
         itemDto1.setDescription("Audi TT");
         itemDto1.setAvailable(true);
+    }
+
+    private void clear() {
+        String query = "ALTER TABLE items ALTER COLUMN id RESTART WITH 1";
+        jdbcTemplate.update(query);
     }
 }

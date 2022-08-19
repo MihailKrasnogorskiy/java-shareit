@@ -9,9 +9,10 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.http.MediaType;
+import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.repository.UserRepository;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
@@ -22,25 +23,28 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @AutoConfigureMockMvc
 @TestInstance(Lifecycle.PER_CLASS)
 class UserControllerTest {
-    @Autowired
-    ObjectMapper mapper;
     private final UserDto user = UserDto.builder()
             .name("Voldemar")
             .email("voldemar@mail.ru")
             .build();
     @Autowired
+    ObjectMapper mapper;
+    @Autowired
     private UserController controller;
     @Autowired
-    private UserRepository repository;
-    @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private JdbcTemplate jdbcTemplate;
+
 
     /**
      * возвращение списка всех пользователей
      */
     @Test
+    @Transactional
     void test01_getAllUsers() throws Exception {
-        repository.clear();
+        clear();
         assertTrue(controller.getAll().isEmpty());
         this.mockMvc.perform(post("/users").content(mapper.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON))
@@ -49,6 +53,7 @@ class UserControllerTest {
         assertEquals(1, controller.getAll().size());
         assertEquals("Voldemar", controller.getAll().get(0).getName());
         user.setEmail("mail@mail.com");
+        System.out.println(controller.getAll().get(0).getName());
         this.mockMvc.perform(post("/users").content(mapper.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -61,12 +66,13 @@ class UserControllerTest {
      * возвращение пользователя по id
      */
     @Test
+    @Transactional
     void test02_getById() throws Exception {
-        repository.clear();
+        clear();
         this.mockMvc.perform(post("/users").content(mapper.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
-        user.setId(1);
+        user.setId(1L);
         this.mockMvc.perform(get("/users/1"))
                 .andExpect(status().isOk())
                 .andExpect(content().json(mapper.writeValueAsString(user)));
@@ -79,8 +85,9 @@ class UserControllerTest {
      * создание пользователя
      */
     @Test
+    @Transactional
     void test03_createUser() throws Exception {
-        repository.clear();
+        clear();
         this.mockMvc.perform(post("/users").content(mapper.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -104,8 +111,9 @@ class UserControllerTest {
      * обновление пользователя
      */
     @Test
+    @Transactional
     void test04_updateUser() throws Exception {
-        repository.clear();
+        clear();
         this.mockMvc.perform(post("/users").content(mapper.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -151,8 +159,9 @@ class UserControllerTest {
      */
 
     @Test
+    @Transactional
     void test05_deleteUser() throws Exception {
-        repository.clear();
+        clear();
         this.mockMvc.perform(post("/users").content(mapper.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -171,5 +180,10 @@ class UserControllerTest {
     void restoreUser() {
         user.setName("Voldemar");
         user.setEmail("voldemar@mail.ru");
+    }
+
+    private void clear() {
+        String query = "ALTER TABLE users ALTER COLUMN id RESTART WITH 1";
+        jdbcTemplate.update(query);
     }
 }

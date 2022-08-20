@@ -7,6 +7,9 @@ import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.HashSet;
 
+/**
+ * маппер вещей
+ */
 @Component
 public class ItemMapper {
     private final UserRepository userRepository;
@@ -18,7 +21,12 @@ public class ItemMapper {
         this.commentMapper = commentMapper;
     }
 
-
+    /**
+     * создание dto объекта вещи
+     *
+     * @param item объект вещи
+     * @return dto объект вещи
+     */
     public ItemDto toItemDto(Item item) {
         return ItemDto.builder()
                 .id(item.getId())
@@ -32,6 +40,12 @@ public class ItemMapper {
                 .build();
     }
 
+    /**
+     * создание объекта вещи
+     *
+     * @param itemDto dto объект вещи
+     * @return объект вещи
+     */
     public Item toItem(ItemDto itemDto) {
         Item item = Item.builder()
                 .name(itemDto.getName())

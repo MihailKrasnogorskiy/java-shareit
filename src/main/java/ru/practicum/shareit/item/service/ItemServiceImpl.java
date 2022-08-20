@@ -142,7 +142,8 @@ class ItemServiceImpl implements ItemService {
         comment.setAuthor(UserMapper.toUser(userService.getById(userId)));
         comment.setItem(repository.findById(itemId).get());
         comment.setCreated(LocalDateTime.now());
-        commentRepository.save(comment);
+        comment = commentRepository.save(comment);
+        log.info("Comment with id {} created", comment.getId());
         return commentMapper.toCommentDto(comment);
     }
 
@@ -157,12 +158,23 @@ class ItemServiceImpl implements ItemService {
         }
     }
 
+    /**
+     * проверка является ли пользователь владельцем
+     *
+     * @param userId id пользователя
+     */
     private void doUserHaveItems(long userId) {
         if (getAllByUserId(userId).isEmpty()) {
             throw new NotFoundException("This user with id " + userId + " doesn't have items");
         }
     }
 
+    /**
+     * проверка явсляется ли пользователь владельцем конкретной вещи
+     *
+     * @param userId id пользователя
+     * @param itemId id вещи
+     */
     private void doUserHaveThisItems(long userId, long itemId) {
         doUserHaveItems(userId);
         List<Item> items = new ArrayList<>(repository.findByOwner_id(userId));
@@ -172,6 +184,12 @@ class ItemServiceImpl implements ItemService {
                         new NotFoundException("This user with id " + userId + " doesn't have item with id " + itemId));
     }
 
+    /**
+     * добавление бронирований в dto объект вещи
+     *
+     * @param itemDto dto объект вещи
+     * @return dto объект вещи
+     */
     private ItemDto fillBookingInItemDto(ItemDto itemDto) {
         long itemId = itemDto.getId();
         List<BookingDto> bookings = bookingService.findAllByItemId(itemId);
@@ -186,6 +204,12 @@ class ItemServiceImpl implements ItemService {
         return itemDto;
     }
 
+    /**
+     * добавление комментариев в dto объект вещи
+     *
+     * @param itemDto dto объект вещи
+     * @return dto объект вещи
+     */
     private ItemDto addCommentsToItemDto(ItemDto itemDto) {
         commentRepository.findByItemId(itemDto.getId()).stream()
                 .map(commentMapper::toCommentDto)

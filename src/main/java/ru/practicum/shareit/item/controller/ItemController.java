@@ -95,6 +95,14 @@ public class ItemController {
         service.delete(userId, itemId);
     }
 
+    /**
+     * добавление комемнтария
+     *
+     * @param userId  id пользователя
+     * @param itemId  id вещи
+     * @param comment dto объект комментария
+     * @return dto объект комментария
+     */
     @PostMapping("{itemId}/comment")
     public CommentDto addComment(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long itemId,
                                  @Valid @RequestBody CommentDto comment) {

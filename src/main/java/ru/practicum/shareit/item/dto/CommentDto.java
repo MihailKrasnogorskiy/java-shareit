@@ -6,6 +6,7 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 import java.time.LocalDateTime;
 
+// класс dto объекта комментария
 @Data
 @Builder
 public class CommentDto {

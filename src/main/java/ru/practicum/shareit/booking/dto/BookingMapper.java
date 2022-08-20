@@ -9,6 +9,9 @@ import ru.practicum.shareit.item.repository.ItemRepository;
 import ru.practicum.shareit.user.dto.UserMapper;
 import ru.practicum.shareit.user.repository.UserRepository;
 
+/**
+ * маппер бронирований
+ */
 @Component
 public class BookingMapper {
 
@@ -23,6 +26,12 @@ public class BookingMapper {
         this.itemMapper = itemMapper;
     }
 
+    /**
+     * создание объекта бронирования из dto объкта создания бронирования
+     *
+     * @param bookingDto dto объект создания бронирования
+     * @return объект бронирования
+     */
     public Booking toBooking(CreatingBookingDto bookingDto) {
         return Booking.builder()
                 .start(bookingDto.getStart())
@@ -33,6 +42,12 @@ public class BookingMapper {
                 .build();
     }
 
+    /**
+     * создание dto объекта бронирования из объкта бронирования
+     *
+     * @param booking объект бронирования
+     * @return dto объект бронирования
+     */
     public BookingDto toBookingDto(Booking booking) {
         return BookingDto.builder()
                 .id(booking.getId())
@@ -44,6 +59,12 @@ public class BookingMapper {
                 .build();
     }
 
+    /**
+     * создание dto объекта бронирования для включения в dto объект вещи из dto объкта бронирования
+     *
+     * @param bookingDto dto объект бронирования
+     * @return dto объект бронирования для включения в dto объект вещи
+     */
     public BookingDtoForItemDto toBookingForItemDto(BookingDto bookingDto) {
         return BookingDtoForItemDto.builder()
                 .id(bookingDto.getId())

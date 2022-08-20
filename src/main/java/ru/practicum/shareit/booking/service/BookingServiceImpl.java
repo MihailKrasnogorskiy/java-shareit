@@ -20,6 +20,9 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
+/**
+ * класс реализации интерфеса сервиса бронирований
+ */
 @Service
 @Slf4j
 public class BookingServiceImpl implements BookingService {
@@ -69,9 +72,11 @@ public class BookingServiceImpl implements BookingService {
         } else if (approved) {
             booking.setStatus(BookingStatus.APPROVED);
             repository.save(booking);
+            log.info("Booking with id {} has been approved", bookingId);
         } else {
             booking.setStatus(BookingStatus.REJECTED);
             repository.save(booking);
+            log.info("Booking with id {} has been rejected", bookingId);
         }
         return mapper.toBookingDto(booking);
     }
@@ -95,84 +100,24 @@ public class BookingServiceImpl implements BookingService {
     @Override
     public List<BookingDto> findAllByUser(long userId, BookingState state) {
         userService.validateUserId(userId);
-        if (state.equals(BookingState.ALL)) {
-            return repository.findByBooker_id(userId).stream()
-                    .map(mapper::toBookingDto)
-                    .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
-                    .collect(Collectors.toList());
-        } else if (state.equals(BookingState.PAST)) {
-            return repository.findByBooker_id(userId).stream()
-                    .map(mapper::toBookingDto)
-                    .filter(b -> b.getEnd().isBefore(LocalDateTime.now()))
-                    .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
-                    .collect(Collectors.toList());
-        } else if (state.equals(BookingState.FUTURE)) {
-            return repository.findByBooker_id(userId).stream()
-                    .map(mapper::toBookingDto)
-                    .filter(b -> b.getStart().isAfter(LocalDateTime.now()))
-                    .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
-                    .collect(Collectors.toList());
-        } else if (state.equals(BookingState.CURRENT)) {
-            return repository.findByBooker_id(userId).stream()
-                    .map(mapper::toBookingDto)
-                    .filter(b -> b.getStart().isBefore(LocalDateTime.now()))
-                    .filter(b -> b.getEnd().isAfter(LocalDateTime.now()))
-                    .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
-                    .collect(Collectors.toList());
+        if (state.equals(BookingState.WAITING)) {
+            return filterByState(repository.findByBooker_idAndStatus(userId, BookingStatus.WAITING), state);
         } else if (state.equals(BookingState.REJECTED)) {
-            return repository.findByBooker_idAndStatus(userId, BookingStatus.REJECTED).stream()
-                    .map(mapper::toBookingDto)
-                    .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
-                    .collect(Collectors.toList());
-        } else if (state.equals(BookingState.WAITING)) {
-            return repository.findByBooker_idAndStatus(userId, BookingStatus.WAITING).stream()
-                    .map(mapper::toBookingDto)
-                    .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
-                    .collect(Collectors.toList());
+            return filterByState(repository.findByBooker_idAndStatus(userId, BookingStatus.REJECTED), state);
         } else {
-            return new ArrayList<>();
+            return filterByState(repository.findByBooker_id(userId), state);
         }
     }
 
     @Override
     public List<BookingDto> findAllByOwner(long ownerId, BookingState state) {
         userService.validateUserId(ownerId);
-        if (state.equals(BookingState.ALL)) {
-            return repository.findByOwnerId(ownerId).stream()
-                    .map(mapper::toBookingDto)
-                    .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
-                    .collect(Collectors.toList());
-        } else if (state.equals(BookingState.PAST)) {
-            return repository.findByOwnerId(ownerId).stream()
-                    .map(mapper::toBookingDto)
-                    .filter(b -> b.getEnd().isBefore(LocalDateTime.now()))
-                    .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
-                    .collect(Collectors.toList());
-        } else if (state.equals(BookingState.FUTURE)) {
-            return repository.findByOwnerId(ownerId).stream()
-                    .map(mapper::toBookingDto)
-                    .filter(b -> b.getStart().isAfter(LocalDateTime.now()))
-                    .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
-                    .collect(Collectors.toList());
-        } else if (state.equals(BookingState.CURRENT)) {
-            return repository.findByOwnerId(ownerId).stream()
-                    .map(mapper::toBookingDto)
-                    .filter(b -> b.getStart().isBefore(LocalDateTime.now()))
-                    .filter(b -> b.getEnd().isAfter(LocalDateTime.now()))
-                    .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
-                    .collect(Collectors.toList());
+        if (state.equals(BookingState.WAITING)) {
+            return filterByState(repository.findByOwnerIdAndStatus(ownerId, "WAITING"), state);
         } else if (state.equals(BookingState.REJECTED)) {
-            return repository.findByOwnerIdAndStatus(ownerId, "REJECTED").stream()
-                    .map(mapper::toBookingDto)
-                    .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
-                    .collect(Collectors.toList());
-        } else if (state.equals(BookingState.WAITING)) {
-            return repository.findByOwnerIdAndStatus(ownerId, "WAITING").stream()
-                    .map(mapper::toBookingDto)
-                    .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
-                    .collect(Collectors.toList());
+            return filterByState(repository.findByOwnerIdAndStatus(ownerId, "REJECTED"), state);
         } else {
-            return new ArrayList<>();
+            return filterByState(repository.findByOwnerId(ownerId), state);
         }
     }
 
@@ -184,6 +129,49 @@ public class BookingServiceImpl implements BookingService {
                 .collect(Collectors.toList());
     }
 
+    /**
+     * фильтрация списка бронирований по вариванту выборки
+     *
+     * @param bookings список бронирований
+     * @param state    варивант выборки
+     * @return список dto объектов бронирования
+     */
+    public List<BookingDto> filterByState(List<Booking> bookings, BookingState state) {
+        if (state.equals(BookingState.ALL) || state.equals(BookingState.REJECTED) ||
+                state.equals(BookingState.WAITING)) {
+            return bookings.stream()
+                    .map(mapper::toBookingDto)
+                    .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
+                    .collect(Collectors.toList());
+        } else if (state.equals(BookingState.PAST)) {
+            return bookings.stream()
+                    .map(mapper::toBookingDto)
+                    .filter(b -> b.getEnd().isBefore(LocalDateTime.now()))
+                    .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
+                    .collect(Collectors.toList());
+        } else if (state.equals(BookingState.FUTURE)) {
+            return bookings.stream()
+                    .map(mapper::toBookingDto)
+                    .filter(b -> b.getStart().isAfter(LocalDateTime.now()))
+                    .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
+                    .collect(Collectors.toList());
+        } else if (state.equals(BookingState.CURRENT)) {
+            return bookings.stream()
+                    .map(mapper::toBookingDto)
+                    .filter(b -> b.getStart().isBefore(LocalDateTime.now()))
+                    .filter(b -> b.getEnd().isAfter(LocalDateTime.now()))
+                    .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
+                    .collect(Collectors.toList());
+        } else {
+            return new ArrayList<>();
+        }
+    }
+
+    /**
+     * валидация даты окончания бронирования
+     *
+     * @param bookingDto dto объект бронирования
+     */
     private void validationEndDate(CreatingBookingDto bookingDto) {
         if (bookingDto.getStart().isAfter(bookingDto.getEnd())) {
             throw new EndDateValidateException();

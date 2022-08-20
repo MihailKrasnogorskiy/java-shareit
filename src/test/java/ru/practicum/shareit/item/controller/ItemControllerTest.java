@@ -1,10 +1,7 @@
 package ru.practicum.shareit.item.controller;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
-import org.junit.jupiter.api.BeforeAll;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.junit.jupiter.api.TestInstance;
+import org.junit.jupiter.api.*;
 import org.junit.jupiter.api.TestInstance.Lifecycle;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.AutoConfigureMockMvc;
@@ -285,6 +282,19 @@ class ItemControllerTest {
                 .andExpect(status().isOk());
     }
 
+    @AfterAll
+    void clearEnvironment() throws Exception {
+        clear();
+        String query = "SET REFERENTIAL_INTEGRITY FALSE";
+        jdbcTemplate.update(query);
+        query = "TRUNCATE TABLE users ";
+        jdbcTemplate.update(query);
+        query = "ALTER TABLE users ALTER COLUMN id RESTART WITH 1";
+        jdbcTemplate.update(query);
+        query = "SET REFERENTIAL_INTEGRITY TRUE";
+        jdbcTemplate.update(query);
+    }
+
     /**
      * возвращение объектов в исходное состояние
      */
@@ -298,6 +308,9 @@ class ItemControllerTest {
         itemDto1.setAvailable(true);
     }
 
+    /**
+     * сброс автоинкремента в таблице items
+     */
     private void clear() {
         String query = "ALTER TABLE items ALTER COLUMN id RESTART WITH 1";
         jdbcTemplate.update(query);

@@ -59,5 +59,13 @@ public interface ItemService {
      */
     void delete(long userId, long itemId);
 
+    /**
+     * добавление комемнтария
+     *
+     * @param userId  id пользователя
+     * @param itemId  id вещи
+     * @param comment dto объект комментария
+     * @return dto объект комментария
+     */
     CommentDto addComment(long userId, long itemId, CommentDto comment);
 }

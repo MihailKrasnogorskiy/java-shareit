@@ -53,7 +53,6 @@ class UserControllerTest {
         assertEquals(1, controller.getAll().size());
         assertEquals("Voldemar", controller.getAll().get(0).getName());
         user.setEmail("mail@mail.com");
-        System.out.println(controller.getAll().get(0).getName());
         this.mockMvc.perform(post("/users").content(mapper.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk());
@@ -182,6 +181,9 @@ class UserControllerTest {
         user.setEmail("voldemar@mail.ru");
     }
 
+    /**
+     * сброс автоинкремента в таблице users
+     */
     private void clear() {
         String query = "ALTER TABLE users ALTER COLUMN id RESTART WITH 1";
         jdbcTemplate.update(query);

@@ -6,6 +6,9 @@ import ru.practicum.shareit.booking.model.BookingState;
 
 import java.util.Locale;
 
+/**
+ * конвертер статуса бронирований без учёта регистра написания в запросе
+ */
 @Component
 public class BookingStateEnumConverter implements Converter<String, BookingState> {
     @Override

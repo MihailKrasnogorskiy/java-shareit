@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * исключение выбрасываемое при попытке поодтвердить или отклонить бронь не владельцем вещи
+ * исключение выбрасываемое при попытке оставить комментарий пользователем не бравщим вещь в аренду
  */
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class CommentatorValidationException extends RuntimeException {

@@ -6,6 +6,9 @@ import lombok.Data;
 import javax.validation.constraints.FutureOrPresent;
 import java.time.LocalDateTime;
 
+/**
+ * класс dto объкта создания бронирования
+ */
 @Data
 @Builder
 public class CreatingBookingDto {

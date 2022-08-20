@@ -6,6 +6,9 @@ import ru.practicum.shareit.booking.model.BookingStatus;
 
 import java.time.LocalDateTime;
 
+/**
+ * dto класс бронирований для внедрения в dto класс вещи
+ */
 @Data
 @Builder
 public class BookingDtoForItemDto {

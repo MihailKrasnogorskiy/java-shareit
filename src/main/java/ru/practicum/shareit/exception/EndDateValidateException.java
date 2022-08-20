@@ -4,7 +4,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ResponseStatus;
 
 /**
- * исключение выбрасываемое при попытке регистрации пользователя с уже зарегистрированным email
+ * исключение выбрасываемое при попытке создания бронирования с датой окончания раньше даты начала
  */
 @ResponseStatus(HttpStatus.BAD_REQUEST)
 public class EndDateValidateException extends RuntimeException {

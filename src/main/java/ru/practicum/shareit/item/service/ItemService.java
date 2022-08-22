@@ -1,5 +1,6 @@
 package ru.practicum.shareit.item.service;
 
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.ItemUpdate;
 
@@ -21,7 +22,7 @@ public interface ItemService {
      * @param id id вещи
      * @return dto объект вещи
      */
-    ItemDto getById(long id);
+    ItemDto getById(long id, long userId);
 
     /**
      * метод для текстового поиска вещей по нименованию или описанию без учёта регистра
@@ -57,4 +58,14 @@ public interface ItemService {
      * @param itemId - id вещи
      */
     void delete(long userId, long itemId);
+
+    /**
+     * добавление комемнтария
+     *
+     * @param userId  id пользователя
+     * @param itemId  id вещи
+     * @param comment dto объект комментария
+     * @return dto объект комментария
+     */
+    CommentDto addComment(long userId, long itemId, CommentDto comment);
 }

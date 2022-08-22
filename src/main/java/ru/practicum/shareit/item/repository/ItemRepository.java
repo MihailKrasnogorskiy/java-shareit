@@ -1,35 +1,19 @@
 package ru.practicum.shareit.item.repository;
 
+import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.CrudRepository;
 import ru.practicum.shareit.item.model.Item;
-import ru.practicum.shareit.item.model.ItemUpdate;
 
 import java.util.List;
 
-public interface ItemRepository {
-
-    /**
-     * создание вещи
-     *
-     * @param userId - id владельца
-     * @param item   - объект создаваемой вещи
-     * @return - объект созданой вещи
-     */
-    Item create(long userId, Item item);
-
+public interface ItemRepository extends CrudRepository<Item, Long> {
     /**
      * метод для получения списка id всех вещей
      *
      * @return список id всех вещей
      */
+    @Query("select id from Item")
     List<Long> getAllItemsId();
-
-    /**
-     * поиск вещи по id
-     *
-     * @param id id вещи
-     * @return объект вещи
-     */
-    Item getById(long id);
 
     /**
      * просмотр владельцем списка всех его вещей
@@ -38,17 +22,8 @@ public interface ItemRepository {
      * @param userId - id владельца вещей
      * @return лист всех вещей пользователя
      */
-    List<Item> getAllByUserId(long userId);
+    List<Item> findByOwner_id(long userId);
 
-    /**
-     * обновление вещи
-     *
-     * @param userId     id владельца
-     * @param itemId     id обновляемой вещи
-     * @param itemUpdate - объект обновляемой вещи
-     * @return объект обновлённой вещи
-     */
-    Item update(long userId, long itemId, ItemUpdate itemUpdate);
 
     /**
      * метод для текстового поиска вещей по нименованию или описанию без учёта регистра
@@ -56,18 +31,9 @@ public interface ItemRepository {
      * @param text - текст поиска
      * @return лист объектов доступных для аренды вещей, соответствующих запросу
      */
+    @Query(" select i from Item as i " +
+            "where upper(i.name) like upper(concat('%', ?1, '%')) and i.available = true" +
+            "   or upper(i.description) like upper(concat('%', ?1, '%')) and i.available = true")
     List<Item> search(String text);
 
-    /**
-     * удаление вещи владельцем
-     *
-     * @param userId - id владельца
-     * @param itemId - id вещи
-     */
-    void delete(long userId, long itemId);
-
-    /**
-     * очищает хранилище и сбрасывает счётчик
-     */
-    void clear();
 }

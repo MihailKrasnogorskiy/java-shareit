@@ -3,22 +3,29 @@ package ru.practicum.shareit.user.model;
 import lombok.Builder;
 import lombok.Data;
 
-import javax.validation.constraints.Email;
-import javax.validation.constraints.NotBlank;
-import javax.validation.constraints.NotNull;
+import javax.persistence.*;
 
 /**
  * класс пользователя
  */
 @Builder
 @Data
+@Entity
+@Table(name = "users", schema = "public")
 public class User {
-
-    private long id;
-    @NotNull
-    @NotBlank
+    @Id
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
+    private Long id;
     private String name;
-    @Email
-    @NotNull
     private String email;
+
+    public User(Long id, String name, String email) {
+        this.id = id;
+        this.name = name;
+        this.email = email;
+    }
+
+    public User() {
+
+    }
 }

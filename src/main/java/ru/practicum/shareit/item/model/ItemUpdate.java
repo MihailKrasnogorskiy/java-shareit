@@ -3,6 +3,9 @@ package ru.practicum.shareit.item.model;
 import lombok.Builder;
 import lombok.Data;
 
+/**
+ * класс объекта обновления сдаваемой в аренду вещи
+ */
 @Data
 @Builder
 public class ItemUpdate {

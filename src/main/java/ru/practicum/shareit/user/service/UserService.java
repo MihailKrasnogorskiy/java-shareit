@@ -30,7 +30,7 @@ public interface UserService {
      * @param user - объект пользователя
      * @return dto объект пользователя
      */
-    UserDto update(long id, UserUpdate user);
+    UserDto update(Long id, UserUpdate user);
 
     /**
      * возвращение пользователя по id

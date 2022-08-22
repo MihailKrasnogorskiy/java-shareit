@@ -2,14 +2,18 @@ package ru.practicum.shareit.user.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.stereotype.Service;
 import ru.practicum.shareit.exception.EmailUsedException;
+import ru.practicum.shareit.exception.IsBlankException;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserMapper;
+import ru.practicum.shareit.user.model.User;
 import ru.practicum.shareit.user.model.UserUpdate;
 import ru.practicum.shareit.user.repository.UserRepository;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -29,26 +33,42 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public List<UserDto> getAll() {
-        return repository.getAll().stream()
+        List<User> result = new ArrayList<>();
+        repository.findAll().forEach(result::add);
+        return result.stream()
                 .map(UserMapper::toUserDto)
                 .collect(Collectors.toList());
     }
 
     @Override
     public UserDto create(UserDto userDto) {
-        validateUserEmail(userDto.getEmail());
-        UserDto userdto = UserMapper.toUserDto(repository.create(UserMapper.toUser(userDto)));
-        log.info("User with id {} has been created", userdto.getId());
-        return userdto;
+        userDto.setId(0L);
+        try {
+            UserDto userdto = UserMapper.toUserDto(repository.save(UserMapper.toUser(userDto)));
+            log.info("User with id {} has been created", userdto.getId());
+            return userdto;
+        } catch (DataIntegrityViolationException e) {
+            throw new EmailUsedException("This email is already use");
+        }
     }
 
     @Override
-    public UserDto update(long id, UserUpdate user) {
+    public UserDto update(Long id, UserUpdate user) {
         validateUserId(id);
         if (user.getEmail() != null) {
             validateUserEmail(user.getEmail());
         }
-        UserDto userdto = UserMapper.toUserDto(repository.update(id, user));
+        User userInDB = repository.findById(id).get();
+        if (user.getName() != null) {
+            if (user.getName().isBlank()) {
+                throw new IsBlankException("Username");
+            }
+            userInDB.setName(user.getName());
+        }
+        if (user.getEmail() != null) {
+            userInDB.setEmail(user.getEmail());
+        }
+        UserDto userdto = UserMapper.toUserDto(repository.save(userInDB));
         log.info("User with id {} has been updated", userdto.getId());
         return userdto;
     }
@@ -56,13 +76,13 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getById(long id) {
         validateUserId(id);
-        return UserMapper.toUserDto(repository.getById(id));
+        return UserMapper.toUserDto(repository.findById(id).get());
     }
 
     @Override
     public void delete(long id) {
         validateUserId(id);
-        repository.delete(id);
+        repository.deleteById(id);
         log.info("User with id {} has been deleted", id);
     }
 

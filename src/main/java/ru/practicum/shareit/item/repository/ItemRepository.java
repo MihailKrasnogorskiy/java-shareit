@@ -36,4 +36,6 @@ public interface ItemRepository extends CrudRepository<Item, Long> {
             "   or upper(i.description) like upper(concat('%', ?1, '%')) and i.available = true")
     List<Item> search(String text);
 
+    List<Item> findAllByRequestId(long requestId);
+
 }

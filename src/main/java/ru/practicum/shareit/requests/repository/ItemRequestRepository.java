@@ -1,7 +1,14 @@
 package ru.practicum.shareit.requests.repository;
 
+import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.CrudRepository;
 import ru.practicum.shareit.requests.ItemRequest;
 
+import java.util.List;
+
 public interface ItemRequestRepository extends CrudRepository<ItemRequest, Long> {
+    @Query("select id from ItemRequest")
+    List<Long> getAllItemsId();
+
+    List<ItemRequest> findItemRequestByRequester_Id(long requesterId);
 }

@@ -3,9 +3,10 @@ package ru.practicum.shareit.requests.dto;
 import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Data;
-import ru.practicum.shareit.user.model.User;
+import ru.practicum.shareit.item.dto.ItemDtoForRequest;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
  * // TODO .
@@ -18,4 +19,5 @@ public class ItemRequestDto {
     private String description;
     private long requester;
     private LocalDateTime created;
+    private List<ItemDtoForRequest> items;
 }

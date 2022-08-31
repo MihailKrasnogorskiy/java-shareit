@@ -6,6 +6,7 @@ import lombok.Data;
 import ru.practicum.shareit.item.dto.ItemDtoForRequest;
 
 import java.time.LocalDateTime;
+import java.util.ArrayList;
 import java.util.List;
 
 /**

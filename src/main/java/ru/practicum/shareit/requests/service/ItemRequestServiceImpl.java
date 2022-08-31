@@ -2,7 +2,10 @@ package ru.practicum.shareit.requests.service;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Component;
+import ru.practicum.shareit.OffsetLimitPageable;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemMapper;
 import ru.practicum.shareit.item.repository.ItemRepository;
@@ -60,7 +63,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
-    public List<ItemRequestDto> findAll(long userId) {
+    public List<ItemRequestDto> findAllByUser(long userId) {
         userService.validateUserId(userId);
         return repository.findItemRequestByRequester_Id(userId).stream()
                 .map(mapper::toItemRequestDto)
@@ -69,7 +72,20 @@ public class ItemRequestServiceImpl implements ItemRequestService {
                 .collect(Collectors.toList());
     }
 
+    @Override
+    public List<ItemRequestDto> findAllOnPage(long userId, Integer from, Integer size) {
+        userService.validateUserId(userId);
+        Pageable pageable = OffsetLimitPageable.of(from, size, Sort.by(Sort.Direction.DESC, "created"));
+        return repository.findItemRequestByRequester_IdNot(userId, pageable).stream()
+                .map(mapper::toItemRequestDto)
+                .map(this::addItemDto)
+                .collect(Collectors.toList());
+    }
+
     private ItemRequestDto addItemDto(ItemRequestDto dto) {
+        if (dto.getItems() == null) {
+            return dto;
+        }
         itemRepository.findAllByRequestId(dto.getId()).stream()
                 .map(itemMapper::itemDtoForRequest)
                 .forEach(dto.getItems()::add);

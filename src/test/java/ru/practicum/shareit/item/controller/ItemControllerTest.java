@@ -44,7 +44,7 @@ class ItemControllerTest {
             .description("Audi TT")
             .available(true)
             .owner(1)
-            .requestId(0)
+            .requestId(null)
             .comments(new HashSet<>())
             .build();
     @Autowired
@@ -85,7 +85,7 @@ class ItemControllerTest {
                 .description("Лодочный прицеп МЗСА G")
                 .available(true)
                 .owner(1)
-                .requestId(0)
+                .requestId(null)
                 .comments(new HashSet<>())
                 .build();
         list.add(itemDto2);
@@ -224,7 +224,7 @@ class ItemControllerTest {
                 .description("TT")
                 .available(true)
                 .owner(1)
-                .requestId(0)
+                .requestId(null)
                 .comments(new HashSet<>())
                 .build();
         list.add(itemDto2);

@@ -35,7 +35,15 @@ public class ItemRequestController {
     }
 
     @GetMapping
-    public List<ItemRequestDto> findAll(@RequestHeader("X-Sharer-User-Id") long userId) {
-        return service.findAll(userId);
+    public List<ItemRequestDto> findAllByUser(@RequestHeader("X-Sharer-User-Id") long userId) {
+        return service.findAllByUser(userId);
     }
+
+    @GetMapping("/all")
+    public List<ItemRequestDto> findAllOnPage(@RequestHeader("X-Sharer-User-Id") long userId,
+                                            @RequestParam(defaultValue = "0") Integer from,
+                                              @RequestParam(defaultValue = "20") Integer size) {
+        return service.findAllOnPage(userId, from, size);
+    }
+
 }

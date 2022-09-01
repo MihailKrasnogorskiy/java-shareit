@@ -55,7 +55,8 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     }
 
     @Override
-    public ItemRequestDto getById(long requestId) {
+    public ItemRequestDto getById(long requestId, long userId) {
+        userService.validateUserId(userId);
         validate(requestId);
         ItemRequestDto dto = mapper.toItemRequestDto(repository.findById(requestId).get());
         addItemDto(dto);

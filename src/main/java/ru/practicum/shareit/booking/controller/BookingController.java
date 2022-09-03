@@ -75,11 +75,13 @@ public class BookingController {
      */
     @GetMapping
     public List<BookingDto> findAllByUser(@RequestHeader("X-Sharer-User-Id") long userId,
-                                          @RequestParam(defaultValue = "all") BookingState state) {
+                                          @RequestParam(defaultValue = "all") BookingState state,
+                                          @RequestParam(defaultValue = "0") Integer from,
+                                          @RequestParam(defaultValue = "20") Integer size) {
         if (state.equals(BookingState.UNSUPPORTED_STATUS)) {
             throw new UnknownBookingStateException();
         }
-        return service.findAllByUser(userId, state);
+        return service.findAllByUser(userId, state, from, size);
     }
 
     /**
@@ -91,11 +93,13 @@ public class BookingController {
      */
     @GetMapping("/owner")
     public List<BookingDto> findAllByOwner(@RequestHeader("X-Sharer-User-Id") long ownerId,
-                                           @RequestParam(defaultValue = "all") BookingState state) {
+                                           @RequestParam(defaultValue = "all") BookingState state,
+                                           @RequestParam(defaultValue = "0") Integer from,
+                                           @RequestParam(defaultValue = "20") Integer size) {
         if (state.equals(BookingState.UNSUPPORTED_STATUS)) {
             throw new UnknownBookingStateException();
         }
-        return service.findAllByOwner(ownerId, state);
+        return service.findAllByOwner(ownerId, state, from, size);
     }
 
     @ExceptionHandler

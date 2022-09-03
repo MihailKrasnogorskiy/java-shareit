@@ -16,6 +16,8 @@ public interface ItemService {
      */
     List<ItemDto> getAllByUserId(long userId);
 
+    List<ItemDto> getAllByUserId(long userId, Integer from, Integer size);
+
     /**
      * поиск вещи по id
      *
@@ -28,9 +30,11 @@ public interface ItemService {
      * метод для текстового поиска вещей по нименованию или описанию без учёта регистра
      *
      * @param text - текст поиска
+     * @param from
+     * @param size
      * @return лист объектов доступных для аренды вещей, соответствующих запросу
      */
-    List<ItemDto> search(String text);
+    List<ItemDto> search(String text, Integer from, Integer size);
 
     /**
      * обновление вещи

@@ -283,15 +283,15 @@ class ItemControllerTest {
     }
 
     @AfterAll
-    void clearEnvironment() throws Exception {
+    void clearEnvironment() {
         clear();
-        String query = "SET REFERENTIAL_INTEGRITY FALSE";
+        String query = "SET REFERENTIAL_INTEGRITY = FALSE";
         jdbcTemplate.update(query);
         query = "TRUNCATE TABLE users ";
         jdbcTemplate.update(query);
         query = "ALTER TABLE users ALTER COLUMN id RESTART WITH 1";
         jdbcTemplate.update(query);
-        query = "SET REFERENTIAL_INTEGRITY TRUE";
+        query = "SET REFERENTIAL_INTEGRITY = TRUE";
         jdbcTemplate.update(query);
     }
 

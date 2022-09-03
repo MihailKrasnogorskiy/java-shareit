@@ -3,7 +3,10 @@ package ru.practicum.shareit.item.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.OffsetLimitPageable;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingMapper;
 import ru.practicum.shareit.booking.model.BookingState;
@@ -61,7 +64,17 @@ class ItemServiceImpl implements ItemService {
                 .map(itemMapper::toItemDto)
                 .map(this::fillBookingInItemDto)
                 .map(this::addCommentsToItemDto)
-                .sorted((o1, o2) -> (int) (o1.getId() - o2.getId()))
+                .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<ItemDto> getAllByUserId(long userId, Integer from, Integer size) {
+        userService.validateUserId(userId);
+        Pageable pageable = OffsetLimitPageable.of(from, size, Sort.by(Sort.Direction.ASC, "id"));
+        return repository.findByOwner_id(userId, pageable).stream()
+                .map(itemMapper::toItemDto)
+                .map(this::fillBookingInItemDto)
+                .map(this::addCommentsToItemDto)
                 .collect(Collectors.toList());
     }
 
@@ -77,11 +90,12 @@ class ItemServiceImpl implements ItemService {
     }
 
     @Override
-    public List<ItemDto> search(String text) {
+    public List<ItemDto> search(String text, Integer from, Integer size) {
         if (text.equals("")) {
             return new ArrayList<>();
         }
-        return repository.search(text).stream().map(itemMapper::toItemDto).collect(Collectors.toList());
+        Pageable pageable = OffsetLimitPageable.of(from, size, Sort.by(Sort.Direction.ASC, "id"));
+        return repository.search(text, pageable).stream().map(itemMapper::toItemDto).collect(Collectors.toList());
     }
 
     @Override
@@ -131,7 +145,7 @@ class ItemServiceImpl implements ItemService {
     public CommentDto addComment(long userId, long itemId, CommentDto commentDto) {
         validateItemId(itemId);
         userService.validateUserId(userId);
-        List<Long> itemIds = bookingService.findAllByUser(userId, BookingState.PAST).stream()
+        List<Long> itemIds = bookingService.getPastByUser(userId).stream()
                 .map(BookingDto::getItem)
                 .map(ItemDto::getId)
                 .collect(Collectors.toList());

@@ -9,7 +9,6 @@ import org.springframework.stereotype.Service;
 import ru.practicum.shareit.OffsetLimitPageable;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingMapper;
-import ru.practicum.shareit.booking.model.BookingState;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.exception.CommentatorValidationException;
 import ru.practicum.shareit.exception.IsBlankException;
@@ -33,7 +32,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-class ItemServiceImpl implements ItemService {
+public class ItemServiceImpl implements ItemService {
     private final UserService userService;
     private final ItemRepository repository;
     private final CommentRepository commentRepository;

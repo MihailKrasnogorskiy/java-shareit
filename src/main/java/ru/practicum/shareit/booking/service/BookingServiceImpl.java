@@ -168,13 +168,15 @@ public class BookingServiceImpl implements BookingService {
                         .collect(Collectors.toList());
                 break;
             case WAITING:
-                result = repository.findAllByItemOwnerIdAndStatusOrderByStartDesc(ownerId, BookingStatus.WAITING, pageable)
+                result = repository.findAllByItemOwnerIdAndStatusOrderByStartDesc(ownerId, BookingStatus.WAITING,
+                                pageable)
                         .stream()
                         .map(mapper::toBookingDto)
                         .collect(Collectors.toList());
                 break;
             case REJECTED:
-                result = repository.findAllByItemOwnerIdAndStatusOrderByStartDesc(ownerId, BookingStatus.REJECTED, pageable)
+                result = repository.findAllByItemOwnerIdAndStatusOrderByStartDesc(ownerId, BookingStatus.REJECTED,
+                                pageable)
                         .stream()
                         .map(mapper::toBookingDto)
                         .collect(Collectors.toList());

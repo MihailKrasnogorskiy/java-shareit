@@ -21,7 +21,7 @@ public class BookingDtoForItemDtoJsonTest {
     private JacksonTester<BookingDtoForItemDto> json;
 
     @Test
-    void test15_BookingDtoForItemDto() throws Exception {
+    void test25_BookingDtoForItemDto() throws Exception {
 
         LocalDateTime start = LocalDateTime.now().withNano(0).plusDays(1);
         LocalDateTime end = start.plusDays(1);

@@ -9,6 +9,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.CreatingBookingDto;
+import ru.practicum.shareit.booking.model.BookingState;
 import ru.practicum.shareit.booking.model.BookingStatus;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.exception.*;
@@ -20,6 +21,7 @@ import ru.practicum.shareit.user.service.UserService;
 
 import java.time.LocalDateTime;
 import java.util.HashSet;
+import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
@@ -33,7 +35,7 @@ public class BookingServiceImplTest {
 
     @Autowired
     private BookingService bookingService;
-    LocalDateTime start = LocalDateTime.now().withNano(0).plusDays(1);
+    LocalDateTime start = LocalDateTime.now().withSecond(0).withNano(0).plusDays(1);
     LocalDateTime end = start.plusDays(1);
 
     private CreatingBookingDto creatingDto = CreatingBookingDto.builder()
@@ -72,7 +74,7 @@ public class BookingServiceImplTest {
         ItemUpdate itemDto = ItemUpdate.builder()
                 .available(false)
                 .build();
-        itemService.update(1L, 1L,itemDto);
+        itemService.update(1L, 1L, itemDto);
         creatingDto.setItemId(1L);
         thrown = assertThrows(ItemUnavailableException.class, () -> {
             bookingService.create(2L, creatingDto);
@@ -131,8 +133,9 @@ public class BookingServiceImplTest {
         creatingDto.setStart(start);
         creatingDto.setEnd(end);
     }
+
     @Test
-    void test24_findById(){
+    void test24_findById() {
         bookingService.create(2, creatingDto);
         Throwable thrown = assertThrows(NotFoundException.class, () -> {
             bookingService.findById(3, 1);
@@ -163,6 +166,64 @@ public class BookingServiceImplTest {
             bookingService.findById(3, 1);
         });
         assertEquals("You are not booker", thrown.getMessage());
+    }
+
+    @Test
+    void test26_findAllByUser() {
+        createBookings();
+        List<BookingDto> list = bookingService.findAllByUser(2L, BookingState.ALL, 0, 10);
+        assertEquals(4, list.size());
+        list.clear();
+        list = bookingService.findAllByUser(2L, BookingState.PAST, 0, 10);
+        assertEquals(1, list.size());
+        assertEquals(4, list.get(0).getId());
+        list.clear();
+        list = bookingService.findAllByUser(2L, BookingState.CURRENT, 0, 10);
+        assertEquals(1, list.size());
+        assertEquals(3, list.get(0).getId());
+        list.clear();
+        list = bookingService.findAllByUser(2L, BookingState.REJECTED, 0, 10);
+        assertEquals(1, list.size());
+        assertEquals(4, list.get(0).getId());
+        list.clear();
+        list = bookingService.findAllByUser(2L, BookingState.FUTURE, 0, 10);
+        assertEquals(2, list.size());
+        assertEquals(2, list.get(0).getId());
+        list.clear();
+        list = bookingService.findAllByUser(2L, BookingState.WAITING, 0, 10);
+        assertEquals(3, list.size());
+        assertEquals(2, list.get(0).getId());
+        Throwable thrown = assertThrows(PageArgsValidationException.class, () -> {
+            bookingService.findAllByUser(2L, BookingState.ALL, -1, 0);
+        });
+        assertEquals("from must be positive and size must be more then 0", thrown.getMessage());
+    }
+
+    @Test
+    void test27_findAllByOwner() {
+        createBookings();
+        List<BookingDto> list = bookingService.findAllByOwner(1L, BookingState.ALL, 0, 10);
+        assertEquals(4, list.size());
+        list.clear();
+        list = bookingService.findAllByOwner(1L, BookingState.PAST, 0, 10);
+        assertEquals(1, list.size());
+        assertEquals(4, list.get(0).getId());
+        list.clear();
+        list = bookingService.findAllByOwner(1L, BookingState.CURRENT, 0, 10);
+        assertEquals(1, list.size());
+        assertEquals(3, list.get(0).getId());
+        list.clear();
+        list = bookingService.findAllByOwner(1L, BookingState.REJECTED, 0, 10);
+        assertEquals(1, list.size());
+        assertEquals(4, list.get(0).getId());
+        list.clear();
+        list = bookingService.findAllByOwner(1L, BookingState.FUTURE, 0, 10);
+        assertEquals(2, list.size());
+        assertEquals(2, list.get(0).getId());
+        list.clear();
+        list = bookingService.findAllByOwner(1L, BookingState.WAITING, 0, 10);
+        assertEquals(3, list.size());
+        assertEquals(2, list.get(0).getId());
     }
 
     @BeforeEach
@@ -206,7 +267,30 @@ public class BookingServiceImplTest {
         jdbcTemplate.update(query);
     }
 
-    private void createBookings(){
-
+    private void createBookings() {
+        ItemDto itemDto = ItemDto.builder()
+                .name("Лодка")
+                .description("Нырок")
+                .available(true)
+                .owner(1)
+                .comments(new HashSet<>())
+                .build();
+        itemService.create(1L, itemDto);
+        bookingService.create(2L, creatingDto);
+        creatingDto.setItemId(2L);
+        start = start.plusHours(1);
+        creatingDto.setStart(start);
+        bookingService.create(2L, creatingDto);
+        start = LocalDateTime.now().minusDays(2);
+        end = LocalDateTime.now().minusDays(1);
+        creatingDto.setStart(start);
+        bookingService.create(2L, creatingDto);
+        creatingDto.setItemId(1L);
+        creatingDto.setEnd(end);
+        bookingService.create(2L, creatingDto);
+        bookingService.approve(1, false, 4);
+        creatingDto.setItemId(1L);
+        creatingDto.setStart(LocalDateTime.now().plusDays(1L));
+        creatingDto.setEnd(LocalDateTime.now().plusDays(2L));
     }
 }

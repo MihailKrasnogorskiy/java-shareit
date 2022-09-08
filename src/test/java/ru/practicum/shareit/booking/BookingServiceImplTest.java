@@ -35,8 +35,8 @@ public class BookingServiceImplTest {
 
     @Autowired
     private BookingService bookingService;
-    LocalDateTime start = LocalDateTime.now().withSecond(0).withNano(0).plusDays(1);
-    LocalDateTime end = start.plusDays(1);
+   final LocalDateTime start = LocalDateTime.now().withSecond(0).withNano(0).plusDays(1);
+   final LocalDateTime end = start.plusDays(1);
 
     private CreatingBookingDto creatingDto = CreatingBookingDto.builder()
             .booker(2L)
@@ -278,19 +278,19 @@ public class BookingServiceImplTest {
         itemService.create(1L, itemDto);
         bookingService.create(2L, creatingDto);
         creatingDto.setItemId(2L);
-        start = start.plusHours(1);
-        creatingDto.setStart(start);
+        LocalDateTime start1 = start.plusHours(1);
+        creatingDto.setStart(start1);
         bookingService.create(2L, creatingDto);
-        start = LocalDateTime.now().minusDays(2);
-        end = LocalDateTime.now().minusDays(1);
-        creatingDto.setStart(start);
+        start1 = LocalDateTime.now().minusDays(2);
+        LocalDateTime end1 = LocalDateTime.now().minusDays(1);
+        creatingDto.setStart(start1);
         bookingService.create(2L, creatingDto);
         creatingDto.setItemId(1L);
-        creatingDto.setEnd(end);
+        creatingDto.setEnd(end1);
         bookingService.create(2L, creatingDto);
         bookingService.approve(1, false, 4);
         creatingDto.setItemId(1L);
-        creatingDto.setStart(LocalDateTime.now().plusDays(1L));
-        creatingDto.setEnd(LocalDateTime.now().plusDays(2L));
+        creatingDto.setStart(start);
+        creatingDto.setEnd(end);
     }
 }

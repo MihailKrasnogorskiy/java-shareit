@@ -24,17 +24,15 @@ import java.util.stream.Collectors;
 @DataJpaTest
 @Transactional
 public class BookingRepositoryTest {
-    @Autowired
-    TestEntityManager em;
-
-    @Autowired
-    BookingRepository bookingRepository;
-
     private final User user = new User();
     private final User user1 = new User();
     private final Item item = new Item();
     private final Booking booking = new Booking();
     private final Pageable pageable = OffsetLimitPageable.of(0, 20, Sort.unsorted());
+    @Autowired
+    TestEntityManager em;
+    @Autowired
+    BookingRepository bookingRepository;
 
     @BeforeEach
     void createEnvironment() {

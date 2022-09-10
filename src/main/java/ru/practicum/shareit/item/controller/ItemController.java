@@ -34,7 +34,7 @@ public class ItemController {
     @GetMapping
     public List<ItemDto> getAllByUserId(@RequestHeader("X-Sharer-User-Id") long userId,
                                         @RequestParam(defaultValue = "0") Integer from,
-                                        @RequestParam(defaultValue = "20") Integer size){
+                                        @RequestParam(defaultValue = "20") Integer size) {
         return service.getAllByUserId(userId, from, size);
     }
 

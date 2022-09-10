@@ -28,23 +28,20 @@ import static org.junit.jupiter.api.Assertions.*;
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class BookingServiceImplTest {
-    @Autowired
-    private UserService userService;
-    @Autowired
-    private ItemService itemService;
-
-    @Autowired
-    private BookingService bookingService;
-   final LocalDateTime start = LocalDateTime.now().withSecond(0).withNano(0).plusDays(1);
-   final LocalDateTime end = start.plusDays(1);
-
-    private CreatingBookingDto creatingDto = CreatingBookingDto.builder()
+    final LocalDateTime start = LocalDateTime.now().withSecond(0).withNano(0).plusDays(1);
+    final LocalDateTime end = start.plusDays(1);
+    private final CreatingBookingDto creatingDto = CreatingBookingDto.builder()
             .booker(2L)
             .itemId(1L)
             .start(start)
             .end(end)
             .build();
-
+    @Autowired
+    private UserService userService;
+    @Autowired
+    private ItemService itemService;
+    @Autowired
+    private BookingService bookingService;
     @Autowired
     private JdbcTemplate jdbcTemplate;
 

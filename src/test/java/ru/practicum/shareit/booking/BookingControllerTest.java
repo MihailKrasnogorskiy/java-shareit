@@ -126,10 +126,10 @@ public class BookingControllerTest {
     void test19_findAllByUser() throws Exception {
 
         Mockito
-                .when(bookingService.findAllByUser(anyLong(), any(), any() ,any()))
+                .when(bookingService.findAllByUser(anyLong(), any(), any(), any()))
                 .thenReturn(List.of(bookingDto));
 
-        mvc.perform(get("/bookings")
+        mvc.perform(get("/bookings?from=2&size=2")
                         .header("X-Sharer-User-Id", 2)
                         .queryParam("state", "ALL")
                         .accept(MediaType.APPLICATION_JSON))
@@ -141,14 +141,15 @@ public class BookingControllerTest {
                 .andExpect(jsonPath("$[0].status", is("WAITING")))
                 .andExpect(jsonPath("$[0].item.description", is(bookingDto.getItem().getDescription()), String.class));
     }
+
     @Test
     void test20_findAllByOwner() throws Exception {
 
         Mockito
-                .when(bookingService.findAllByOwner(anyLong(), any(), any() ,any()))
+                .when(bookingService.findAllByOwner(anyLong(), any(), any(), any()))
                 .thenReturn(List.of(bookingDto));
 
-        mvc.perform(get("/bookings/owner")
+        mvc.perform(get("/bookings/owner?from=2&size=2")
                         .header("X-Sharer-User-Id", 1)
                         .queryParam("state", "ALL")
                         .accept(MediaType.APPLICATION_JSON))

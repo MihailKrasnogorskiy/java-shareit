@@ -17,6 +17,7 @@ public class OffsetLimitPageable implements Pageable {
         this.limit = limit;
         this.sort = sort;
     }
+
     public static Pageable of(Integer from, Integer size) {
         if (from == null && size == null) {
             from = 0;
@@ -44,6 +45,7 @@ public class OffsetLimitPageable implements Pageable {
     public static int saveUnboxing(Integer value) {
         return Optional.ofNullable(value).orElse(0);
     }
+
     @Override
     public int getPageNumber() {
         return 0;

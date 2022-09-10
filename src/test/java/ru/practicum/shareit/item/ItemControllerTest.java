@@ -1,4 +1,4 @@
-package ru.practicum.shareit.item.controller;
+package ru.practicum.shareit.item;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.*;
@@ -10,15 +10,25 @@ import org.springframework.http.MediaType;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.transaction.annotation.Transactional;
+import ru.practicum.shareit.booking.dto.CreatingBookingDto;
+import ru.practicum.shareit.booking.service.BookingService;
+import ru.practicum.shareit.exception.CommentatorValidationException;
+import ru.practicum.shareit.item.dto.CommentDto;
 import ru.practicum.shareit.item.dto.ItemDto;
+import ru.practicum.shareit.item.model.Comment;
 import ru.practicum.shareit.item.model.ItemUpdate;
+import ru.practicum.shareit.item.repository.CommentRepository;
+import ru.practicum.shareit.item.service.ItemService;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.repository.UserRepository;
 
+import java.time.LocalDateTime;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
 
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -50,9 +60,17 @@ class ItemControllerTest {
     @Autowired
     UserRepository userRepository;
     @Autowired
+    ItemService service;
+    @Autowired
     ObjectMapper mapper;
     @Autowired
     private MockMvc mockMvc;
+
+    @Autowired
+    private BookingService bookingService;
+
+    @Autowired
+    private CommentRepository commentRepository;
 
     @Autowired
     private JdbcTemplate jdbcTemplate;
@@ -263,6 +281,43 @@ class ItemControllerTest {
                 .andExpect(status().isOk());
         this.mockMvc.perform(get("/items/1").header("X-Sharer-User-Id", 1))
                 .andExpect(status().isNotFound());
+    }
+
+    /**
+     * добавление комментария
+     */
+    @Test
+    @Transactional
+    void test37_addComment() throws Exception {
+        clear();
+        this.mockMvc.perform(post("/items").header("X-Sharer-User-Id", 1)
+                        .content(mapper.writeValueAsString(itemDto))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk())
+                .andExpect(content().json(mapper.writeValueAsString(itemDto1)));
+        LocalDateTime start = LocalDateTime.now().withSecond(0).withNano(0).minusDays(2);
+        LocalDateTime end = start.plusDays(1);
+
+        CreatingBookingDto creatingDto = CreatingBookingDto.builder()
+                .booker(2L)
+                .itemId(1L)
+                .start(start)
+                .end(end)
+                .build();
+        bookingService.create(2L, creatingDto);
+        String commentDto = "{\"text\": \"Comment for item 1\"}";
+        this.mockMvc.perform(post("/items/1/comment").header("X-Sharer-User-Id", 2)
+                        .content(commentDto)
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isOk());
+        List<Comment> list = commentRepository.findByItemId(1L);
+        assertEquals(1, list.get(0).getId());
+        assertEquals(1, list.get(0).getItem().getId());
+        assertEquals("Comment for item 1", list.get(0).getText());
+        Throwable thrown = assertThrows(CommentatorValidationException.class, () -> {
+            service.addComment(1L, 1L, CommentDto.builder().text("text").build());
+        });
+        assertEquals("You are not booker", thrown.getMessage());
     }
 
     /**

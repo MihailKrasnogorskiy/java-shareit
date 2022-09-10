@@ -10,7 +10,7 @@ import javax.validation.Valid;
 import java.util.List;
 
 /**
- * // TODO .
+ * // контроллер отзывов
  */
 @RestController
 @RequestMapping(path = "/requests")
@@ -41,7 +41,7 @@ public class ItemRequestController {
 
     @GetMapping("/all")
     public List<ItemRequestDto> findAllOnPage(@RequestHeader("X-Sharer-User-Id") long userId,
-                                            @RequestParam(defaultValue = "0") Integer from,
+                                              @RequestParam(defaultValue = "0") Integer from,
                                               @RequestParam(defaultValue = "20") Integer size) {
         return service.findAllOnPage(userId, from, size);
     }

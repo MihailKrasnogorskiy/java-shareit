@@ -12,5 +12,6 @@ public interface ItemRequestRepository extends CrudRepository<ItemRequest, Long>
     List<Long> getAllItemsId();
 
     List<ItemRequest> findItemRequestByRequester_Id(long requesterId);
+
     List<ItemRequest> findItemRequestByRequester_IdNot(long requesterId, Pageable pageable);
 }

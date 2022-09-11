@@ -7,6 +7,9 @@ import ru.practicum.shareit.item.model.Item;
 
 import java.util.List;
 
+/**
+ * репозиторий вещей
+ */
 public interface ItemRepository extends CrudRepository<Item, Long> {
     /**
      * метод для получения списка id всех вещей

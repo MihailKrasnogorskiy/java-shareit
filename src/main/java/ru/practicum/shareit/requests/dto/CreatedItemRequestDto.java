@@ -5,7 +5,7 @@ import lombok.Data;
 import javax.validation.constraints.NotBlank;
 
 /**
- * // TODO .
+ * класс дто объекта для создания запроса вещи
  */
 @Data
 public class CreatedItemRequestDto {

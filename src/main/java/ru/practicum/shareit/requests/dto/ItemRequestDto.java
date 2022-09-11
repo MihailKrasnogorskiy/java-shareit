@@ -9,7 +9,7 @@ import java.time.LocalDateTime;
 import java.util.List;
 
 /**
- * // TODO .
+ * dto класс запроса вещи
  */
 @Data
 @Builder

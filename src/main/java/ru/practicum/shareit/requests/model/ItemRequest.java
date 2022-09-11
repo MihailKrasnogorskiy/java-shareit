@@ -8,6 +8,9 @@ import ru.practicum.shareit.user.model.User;
 import javax.persistence.*;
 import java.time.LocalDateTime;
 
+/**
+ * класс запроса вещи
+ */
 @Data
 @Builder
 @Entity

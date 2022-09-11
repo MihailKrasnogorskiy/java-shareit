@@ -65,5 +65,11 @@ public interface BookingService {
      */
     List<BookingDto> findAllByItemId(long itemId);
 
+    /**
+     * возвращение завершённых бронирований пользователя
+     *
+     * @param userId id пользователя
+     * @return список бронирований
+     */
     List<BookingDto> getPastByUser(Long userId);
 }

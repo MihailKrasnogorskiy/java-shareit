@@ -26,20 +26,23 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * тестовый класс контроллера запросов
+ */
 @WebMvcTest(controllers = ItemRequestController.class)
 public class ItemRequestControllerTest {
+    private final LocalDateTime created = LocalDateTime.now().withNano(0);
     @Autowired
     private ObjectMapper mapper;
-
     @MockBean
     private ItemRequestService service;
-
     @Autowired
     private MockMvc mvc;
-
     private ItemRequestDto dto;
-    private final LocalDateTime created = LocalDateTime.now().withNano(0);
 
+    /**
+     * создание окружения
+     */
     @BeforeEach
     void createEnvironment() {
         dto = ItemRequestDto.builder()
@@ -51,6 +54,11 @@ public class ItemRequestControllerTest {
                 .build();
     }
 
+    /**
+     * создание запроса
+     *
+     * @throws Exception
+     */
     @Test
     void test28_create() throws Exception {
         CreatedItemRequestDto createdDto = new CreatedItemRequestDto();
@@ -72,6 +80,11 @@ public class ItemRequestControllerTest {
                 .andExpect(jsonPath("$.created", is(dto.getCreated().toString()), String.class));
     }
 
+    /**
+     * поиск по id
+     *
+     * @throws Exception
+     */
     @Test
     void test29_getById() throws Exception {
         Mockito
@@ -88,6 +101,11 @@ public class ItemRequestControllerTest {
                 .andExpect(jsonPath("$.created", is(dto.getCreated().toString()), String.class));
     }
 
+    /**
+     * поиск всех запросов пользователя
+     *
+     * @throws Exception
+     */
     @Test
     void test30_findAllByUser() throws Exception {
         Mockito
@@ -104,6 +122,11 @@ public class ItemRequestControllerTest {
                 .andExpect(jsonPath("$[0].created", is(dto.getCreated().toString()), String.class));
     }
 
+    /**
+     * поиск всех хапросов других пользователей
+     *
+     * @throws Exception
+     */
     @Test
     void test31_findAllOnPage() throws Exception {
         Mockito

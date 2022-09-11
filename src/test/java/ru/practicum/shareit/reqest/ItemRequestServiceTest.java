@@ -22,6 +22,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * тестовый класс сервиса запросов
+ */
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class ItemRequestServiceTest {
@@ -36,6 +39,9 @@ public class ItemRequestServiceTest {
     @Autowired
     private ItemService itemService;
 
+    /**
+     * создание запроса
+     */
     @Test
     void test32_create() {
         createdDto.setDescription("test");
@@ -50,6 +56,9 @@ public class ItemRequestServiceTest {
         assertNotNull(thrown.getMessage());
     }
 
+    /**
+     * поиск по id
+     */
     @Test
     void test33_getById() {
         createdDto.setDescription("test");
@@ -75,6 +84,9 @@ public class ItemRequestServiceTest {
         assertEquals("This request not found", thrown.getMessage());
     }
 
+    /**
+     * поиск всех запросов пользователя
+     */
     @Test
     void test34_findAllByUser() {
         createdDto.setDescription("test");
@@ -108,6 +120,9 @@ public class ItemRequestServiceTest {
         assertEquals(0, list.get(0).getItems().size());
     }
 
+    /**
+     * поиск всех запросов других пользователей
+     */
     @Test
     void test35_findAllOnPage() {
         createdDto.setDescription("test");
@@ -145,6 +160,9 @@ public class ItemRequestServiceTest {
         assertEquals("from must be positive and size must be more then 0", thrown.getMessage());
     }
 
+    /**
+     * создание окружения
+     */
     @BeforeEach
     void createEnvironment() {
         clearEnvironment();
@@ -166,6 +184,9 @@ public class ItemRequestServiceTest {
         itemService.create(1, itemDto);
     }
 
+    /**
+     * очистка окружения
+     */
     @AfterEach
     void clearEnvironment() {
         String query = "SET REFERENTIAL_INTEGRITY = FALSE";

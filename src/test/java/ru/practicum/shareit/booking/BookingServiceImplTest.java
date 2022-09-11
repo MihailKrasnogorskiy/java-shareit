@@ -25,6 +25,9 @@ import java.util.List;
 
 import static org.junit.jupiter.api.Assertions.*;
 
+/**
+ * тестовый класс сервиса бронирований
+ */
 @SpringBootTest
 @TestInstance(TestInstance.Lifecycle.PER_CLASS)
 public class BookingServiceImplTest {
@@ -45,6 +48,9 @@ public class BookingServiceImplTest {
     @Autowired
     private JdbcTemplate jdbcTemplate;
 
+    /**
+     * создание бронирования
+     */
     @Test
     void test21_create() {
         BookingDto dto = bookingService.create(2L, creatingDto);
@@ -79,6 +85,9 @@ public class BookingServiceImplTest {
         assertEquals("This item is not available", thrown.getMessage());
     }
 
+    /**
+     * подтвеждение бронирования
+     */
     @Test
     void test22_approve() {
         Throwable thrown = assertThrows(NotFoundException.class, () -> {
@@ -119,6 +128,9 @@ public class BookingServiceImplTest {
         assertEquals(BookingStatus.REJECTED, dto.getStatus());
     }
 
+    /**
+     * валидация корректности дат бронирования
+     */
     @Test
     void test23_validationEndDate() {
         creatingDto.setEnd(start);
@@ -131,6 +143,9 @@ public class BookingServiceImplTest {
         creatingDto.setEnd(end);
     }
 
+    /**
+     * поиск бронирования по id
+     */
     @Test
     void test24_findById() {
         bookingService.create(2, creatingDto);
@@ -165,6 +180,9 @@ public class BookingServiceImplTest {
         assertEquals("You are not booker", thrown.getMessage());
     }
 
+    /**
+     * поиск всех бронирований пользователя
+     */
     @Test
     void test26_findAllByUser() {
         createBookings();
@@ -196,6 +214,9 @@ public class BookingServiceImplTest {
         assertEquals("from must be positive and size must be more then 0", thrown.getMessage());
     }
 
+    /**
+     * поиск всех бронирований владельца вещи
+     */
     @Test
     void test27_findAllByOwner() {
         createBookings();
@@ -223,6 +244,9 @@ public class BookingServiceImplTest {
         assertEquals(2, list.get(0).getId());
     }
 
+    /**
+     * создание окружения
+     */
     @BeforeEach
     void createEnvironment() {
         clearEnvironment();
@@ -244,6 +268,9 @@ public class BookingServiceImplTest {
         itemService.create(1L, itemDto);
     }
 
+    /**
+     * очистка окружения
+     */
     @AfterEach
     void clearEnvironment() {
         String query = "SET REFERENTIAL_INTEGRITY = FALSE";
@@ -264,6 +291,9 @@ public class BookingServiceImplTest {
         jdbcTemplate.update(query);
     }
 
+    /**
+     * создание бронирований
+     */
     private void createBookings() {
         ItemDto itemDto = ItemDto.builder()
                 .name("Лодка")

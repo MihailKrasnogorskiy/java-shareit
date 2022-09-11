@@ -71,6 +71,8 @@ public class BookingController {
      *
      * @param userId id пользователя
      * @param state  вариант выборки (ALL, CURRENT, PAST, FUTURE, WAITING, UNSUPPORTED_STATUS, REJECTED)
+     * @param from   - начальный элемент
+     * @param size   - размер выборки
      * @return список dto бъектов бронирования
      */
     @GetMapping
@@ -89,6 +91,8 @@ public class BookingController {
      *
      * @param ownerId id владельца вещи
      * @param state   вариант выборки (ALL, CURRENT, PAST, FUTURE, WAITING, UNSUPPORTED_STATUS, REJECTED)
+     * @param from    - начальный элемент
+     * @param size    - размер выборки
      * @return список dto бъектов бронирования
      */
     @GetMapping("/owner")

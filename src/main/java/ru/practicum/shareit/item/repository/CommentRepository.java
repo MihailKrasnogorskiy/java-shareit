@@ -5,6 +5,9 @@ import ru.practicum.shareit.item.model.Comment;
 
 import java.util.List;
 
+/**
+ * репозиторий комментариев
+ */
 public interface CommentRepository extends CrudRepository<Comment, Long> {
 
     List<Comment> findByItemId(long itemId);

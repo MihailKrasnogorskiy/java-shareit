@@ -20,7 +20,9 @@ import java.time.LocalDateTime;
 import java.util.List;
 import java.util.stream.Collectors;
 
-
+/**
+ * тестовый класс репозитория бронирований
+ */
 @DataJpaTest
 @Transactional
 public class BookingRepositoryTest {
@@ -34,6 +36,9 @@ public class BookingRepositoryTest {
     @Autowired
     BookingRepository bookingRepository;
 
+    /**
+     * создание окружения
+     */
     @BeforeEach
     void createEnvironment() {
         user.setName("Vova");
@@ -58,6 +63,9 @@ public class BookingRepositoryTest {
         em.persist(booking);
     }
 
+    /**
+     * получение всех бронирований владельца вещи
+     */
     @Test
     void test12_findAllByOwnerIdOrderByEndDesc() {
 
@@ -67,6 +75,9 @@ public class BookingRepositoryTest {
         Assertions.assertEquals(booking, bookings.get(0));
     }
 
+    /**
+     * получение всех бронирований владельца вещи с указанием статуса бронирования
+     */
     @Test
     void test13_findAllByOwnerIdAndStatusOrderByEndDesc() {
 
@@ -76,6 +87,9 @@ public class BookingRepositoryTest {
         Assertions.assertEquals(booking, bookings.get(0));
     }
 
+    /**
+     * получение всех бронирований пользователя
+     */
     @Test
     void test14_findAllByBookerIdOrderByStartDesc() {
         List<Booking> bookings = bookingRepository.findAllByBookerIdOrderByStartDesc(user1.getId(), pageable).stream()
@@ -84,6 +98,9 @@ public class BookingRepositoryTest {
         Assertions.assertEquals(booking, bookings.get(0));
     }
 
+    /**
+     * получение всех бронирований пользователя с указанием статуса бронирования
+     */
     @Test
     void test15_findAllByBookerIdAndStatusOrderByStartDesc() {
 

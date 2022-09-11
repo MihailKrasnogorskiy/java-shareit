@@ -64,6 +64,12 @@ public class ItemMapper {
         return item;
     }
 
+    /**
+     * соджания дто объекта вещи для добавления в запрос
+     *
+     * @param item - объект вещи
+     * @return дто объект вещи для добавления в запрос
+     */
     public ItemDtoForRequest itemDtoForRequest(Item item) {
         return ItemDtoForRequest.builder()
                 .id(item.getId())

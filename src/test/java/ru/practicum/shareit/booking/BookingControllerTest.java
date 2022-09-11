@@ -28,6 +28,9 @@ import static org.springframework.test.web.servlet.request.MockMvcRequestBuilder
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+/**
+ * тест класс контроллера бронирований
+ */
 @WebMvcTest(controllers = BookingController.class)
 public class BookingControllerTest {
     @Autowired
@@ -43,6 +46,9 @@ public class BookingControllerTest {
     LocalDateTime start = LocalDateTime.now().withNano(0).plusDays(1);
     LocalDateTime end = start.plusDays(1);
 
+    /**
+     * сожание окружения
+     */
     @BeforeEach
     void createEnvironment() {
         bookingDto = BookingDto.builder()
@@ -56,6 +62,11 @@ public class BookingControllerTest {
                 .build();
     }
 
+    /**
+     * тест создания бронирования
+     *
+     * @throws Exception
+     */
     @Test
     void test16_createNewBooking() throws Exception {
         CreatingBookingDto creatingDto = CreatingBookingDto.builder()
@@ -83,6 +94,11 @@ public class BookingControllerTest {
                 .andExpect(jsonPath("$.item.description", is(bookingDto.getItem().getDescription()), String.class));
     }
 
+    /**
+     * тест подтверждения/отклонения бронирования
+     *
+     * @throws Exception
+     */
     @Test
     void test17_approve() throws Exception {
         bookingDto.setStatus(BookingStatus.APPROVED);
@@ -103,6 +119,11 @@ public class BookingControllerTest {
                 .andExpect(jsonPath("$.item.description", is(bookingDto.getItem().getDescription()), String.class));
     }
 
+    /**
+     * тест поиска по id
+     *
+     * @throws Exception
+     */
     @Test
     void test18_findById() throws Exception {
 
@@ -122,6 +143,11 @@ public class BookingControllerTest {
                 .andExpect(jsonPath("$.item.description", is(bookingDto.getItem().getDescription()), String.class));
     }
 
+    /**
+     * тест поиска всех бронирований пользователя
+     *
+     * @throws Exception
+     */
     @Test
     void test19_findAllByUser() throws Exception {
 
@@ -142,6 +168,11 @@ public class BookingControllerTest {
                 .andExpect(jsonPath("$[0].item.description", is(bookingDto.getItem().getDescription()), String.class));
     }
 
+    /**
+     * тест поиска всех бронирований бладельца вещи
+     *
+     * @throws Exception
+     */
     @Test
     void test20_findAllByOwner() throws Exception {
 

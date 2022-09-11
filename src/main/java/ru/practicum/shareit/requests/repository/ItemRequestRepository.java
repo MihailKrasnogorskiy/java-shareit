@@ -7,6 +7,9 @@ import ru.practicum.shareit.requests.model.ItemRequest;
 
 import java.util.List;
 
+/**
+ * репозиторий запросов вещей
+ */
 public interface ItemRequestRepository extends CrudRepository<ItemRequest, Long> {
     @Query("select id from ItemRequest")
     List<Long> getAllItemsId();

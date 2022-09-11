@@ -6,6 +6,9 @@ import ru.practicum.shareit.exception.PageArgsValidationException;
 
 import java.util.Optional;
 
+/**
+ * реализация интерфейса Pageable
+ */
 public class OffsetLimitPageable implements Pageable {
     private static final int DEFAULT_PAGE_SIZE = 25;
     private final int offset;

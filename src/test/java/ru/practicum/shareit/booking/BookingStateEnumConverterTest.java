@@ -6,6 +6,9 @@ import ru.practicum.shareit.booking.model.BookingState;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
+/**
+ * тестовый класс конвертора вариантов выборки
+ */
 public class BookingStateEnumConverterTest {
     private final BookingStateEnumConverter converter = new BookingStateEnumConverter();
 

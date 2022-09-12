@@ -67,7 +67,7 @@ public class ItemRequestServiceImpl implements ItemRequestService {
     @Override
     public List<ItemRequestDto> findAllByUser(long userId) {
         userService.validateUserId(userId);
-        List<ItemRequestDto> list = repository.findItemRequestByRequester_IdCOrderByCreatedDesc(userId).stream()
+        List<ItemRequestDto> list = repository.findItemRequestByRequester_IdOrderByCreatedDesc(userId).stream()
                 .map(mapper::toItemRequestDto)
                 .map(this::addItemDto)
                 .collect(Collectors.toList());

@@ -14,7 +14,7 @@ public interface ItemRequestRepository extends CrudRepository<ItemRequest, Long>
     @Query("select id from ItemRequest")
     List<Long> getAllItemsId();
 
-    List<ItemRequest> findItemRequestByRequester_IdCOrderByCreatedDesc(long requesterId);
+    List<ItemRequest> findItemRequestByRequester_IdOrderByCreatedDesc(long requesterId);
 
     List<ItemRequest> findItemRequestByRequester_IdNot(long requesterId, Pageable pageable);
 }

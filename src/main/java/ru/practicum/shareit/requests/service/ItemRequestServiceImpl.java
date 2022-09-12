@@ -60,27 +60,32 @@ public class ItemRequestServiceImpl implements ItemRequestService {
         validate(requestId);
         ItemRequestDto dto = mapper.toItemRequestDto(repository.findById(requestId).get());
         addItemDto(dto);
+        log.info("Request for item with id {} has been returned", dto.getId());
         return dto;
     }
 
     @Override
     public List<ItemRequestDto> findAllByUser(long userId) {
         userService.validateUserId(userId);
-        return repository.findItemRequestByRequester_Id(userId).stream()
+        List<ItemRequestDto> list = repository.findItemRequestByRequester_Id(userId).stream()
                 .map(mapper::toItemRequestDto)
                 .map(this::addItemDto)
                 .sorted((o1, o2) -> o2.getCreated().compareTo(o1.getCreated()))
                 .collect(Collectors.toList());
+        log.info("All requests for item by user {} has been returned", userId);
+        return list;
     }
 
     @Override
     public List<ItemRequestDto> findAllOnPage(long userId, Integer from, Integer size) {
         userService.validateUserId(userId);
         Pageable pageable = OffsetLimitPageable.of(from, size, Sort.by(Sort.Direction.DESC, "created"));
-        return repository.findItemRequestByRequester_IdNot(userId, pageable).stream()
+        List<ItemRequestDto> list = repository.findItemRequestByRequester_IdNot(userId, pageable).stream()
                 .map(mapper::toItemRequestDto)
                 .map(this::addItemDto)
                 .collect(Collectors.toList());
+        log.info("All requests for item by other users {} has been returned", userId);
+        return list;
     }
 
     private ItemRequestDto addItemDto(ItemRequestDto dto) {

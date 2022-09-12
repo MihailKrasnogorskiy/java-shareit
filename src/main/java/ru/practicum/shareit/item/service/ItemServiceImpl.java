@@ -59,22 +59,26 @@ public class ItemServiceImpl implements ItemService {
     @Override
     public List<ItemDto> getAllByUserId(long userId) {
         userService.validateUserId(userId);
-        return repository.findByOwner_id(userId).stream()
+        List<ItemDto> list = repository.findByOwner_id(userId).stream()
                 .map(itemMapper::toItemDto)
                 .map(this::fillBookingInItemDto)
                 .map(this::addCommentsToItemDto)
                 .collect(Collectors.toList());
+        log.info("All items by userId {} has been returned", userId);
+        return list;
     }
 
     @Override
     public List<ItemDto> getAllByUserId(long userId, Integer from, Integer size) {
         userService.validateUserId(userId);
         Pageable pageable = OffsetLimitPageable.of(from, size, Sort.by(Sort.Direction.ASC, "id"));
-        return repository.findByOwner_id(userId, pageable).stream()
+        List<ItemDto> list = repository.findByOwner_id(userId, pageable).stream()
                 .map(itemMapper::toItemDto)
                 .map(this::fillBookingInItemDto)
                 .map(this::addCommentsToItemDto)
                 .collect(Collectors.toList());
+        log.info("All items by userId {} has been returned", userId);
+        return list;
     }
 
     @Override
@@ -85,7 +89,9 @@ public class ItemServiceImpl implements ItemService {
         if (itemDto.getOwner() == userId) {
             return addCommentsToItemDto(fillBookingInItemDto(itemDto));
         }
-        return addCommentsToItemDto(itemDto);
+        ItemDto dto = addCommentsToItemDto(itemDto);
+        log.info("Item with id{} has been returned", id);
+        return dto;
     }
 
     @Override
@@ -94,7 +100,10 @@ public class ItemServiceImpl implements ItemService {
             return new ArrayList<>();
         }
         Pageable pageable = OffsetLimitPageable.of(from, size, Sort.by(Sort.Direction.ASC, "id"));
-        return repository.search(text, pageable).stream().map(itemMapper::toItemDto).collect(Collectors.toList());
+        List<ItemDto> list = repository.search(text, pageable).stream().map(itemMapper::toItemDto)
+                .collect(Collectors.toList());
+        log.info("Search results for request {} has been returned", text);
+        return list;
     }
 
     @Override

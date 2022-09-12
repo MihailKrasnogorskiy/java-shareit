@@ -96,7 +96,9 @@ public class BookingServiceImpl implements BookingService {
                 throw new BookerValidationException();
             }
         } else {
-            return mapper.toBookingDto(booking);
+            BookingDto dto = mapper.toBookingDto(booking);
+            log.info("Booking with id {} has been returned", bookingId);
+            return dto;
         }
     }
 
@@ -145,6 +147,7 @@ public class BookingServiceImpl implements BookingService {
                         .collect(Collectors.toList());
                 break;
         }
+        log.info(" All bookings for user with id {} and state {} has been returned", userId, state);
         return result;
     }
 
@@ -192,23 +195,29 @@ public class BookingServiceImpl implements BookingService {
                         .collect(Collectors.toList());
                 break;
         }
+        log.info(" All bookings for owner with id {} and state {} has been returned", ownerId, state);
         return result;
     }
 
     @Override
     public List<BookingDto> findAllByItemId(long itemId) {
-        return repository.findByItem_id(itemId).stream()
+        List<BookingDto> list = repository.findByItem_id(itemId).stream()
                 .map(mapper::toBookingDto)
                 .sorted((o1, o2) -> o2.getStart().compareTo(o1.getStart()))
                 .collect(Collectors.toList());
+        log.info(" All bookings for item with id {} and state {} has been returned", itemId);
+        return list;
     }
 
     @Override
     public List<BookingDto> getPastByUser(Long userId) {
         userService.validateUserId(userId);
-        return repository.findAllByBookerIdAndEndBeforeOrderByStartDesc(userId, LocalDateTime.now()).stream()
+        List<BookingDto> list = repository.findAllByBookerIdAndEndBeforeOrderByStartDesc(userId, LocalDateTime.now())
+                .stream()
                 .map(mapper::toBookingDto)
                 .collect(Collectors.toList());
+        log.info(" All past bookings for user with id {} has been returned", userId);
+        return list;
     }
 
     /**

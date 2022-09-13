@@ -26,7 +26,7 @@ public class ItemDto {
     @NotNull
     private Boolean available;
     private long owner;
-    private long requestId;
+    private Long requestId;
     private BookingDtoForItemDto lastBooking;
     private BookingDtoForItemDto nextBooking;
     private Set<CommentDto> comments = new HashSet<>();

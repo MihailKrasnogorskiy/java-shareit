@@ -1,15 +1,23 @@
 package ru.practicum.shareit.requests.dto;
 
-import ru.practicum.shareit.user.model.User;
+import lombok.AllArgsConstructor;
+import lombok.Builder;
+import lombok.Data;
+import ru.practicum.shareit.item.dto.ItemDtoForRequest;
 
 import java.time.LocalDateTime;
+import java.util.List;
 
 /**
- * // TODO .
+ * dto класс запроса вещи
  */
+@Data
+@Builder
+@AllArgsConstructor
 public class ItemRequestDto {
     private long id;
     private String description;
-    private User requester;
+    private long requester;
     private LocalDateTime created;
+    private List<ItemDtoForRequest> items;
 }

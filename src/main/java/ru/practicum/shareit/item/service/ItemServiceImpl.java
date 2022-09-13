@@ -3,10 +3,12 @@ package ru.practicum.shareit.item.service;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
+import ru.practicum.shareit.OffsetLimitPageable;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingMapper;
-import ru.practicum.shareit.booking.model.BookingState;
 import ru.practicum.shareit.booking.service.BookingService;
 import ru.practicum.shareit.exception.CommentatorValidationException;
 import ru.practicum.shareit.exception.IsBlankException;
@@ -30,7 +32,7 @@ import java.util.stream.Collectors;
 
 @Service
 @Slf4j
-class ItemServiceImpl implements ItemService {
+public class ItemServiceImpl implements ItemService {
     private final UserService userService;
     private final ItemRepository repository;
     private final CommentRepository commentRepository;
@@ -57,12 +59,26 @@ class ItemServiceImpl implements ItemService {
     @Override
     public List<ItemDto> getAllByUserId(long userId) {
         userService.validateUserId(userId);
-        return repository.findByOwner_id(userId).stream()
+        List<ItemDto> list = repository.findByOwner_id(userId).stream()
                 .map(itemMapper::toItemDto)
                 .map(this::fillBookingInItemDto)
                 .map(this::addCommentsToItemDto)
-                .sorted((o1, o2) -> (int) (o1.getId() - o2.getId()))
                 .collect(Collectors.toList());
+        log.info("All items by userId {} has been returned", userId);
+        return list;
+    }
+
+    @Override
+    public List<ItemDto> getAllByUserId(long userId, Integer from, Integer size) {
+        userService.validateUserId(userId);
+        Pageable pageable = OffsetLimitPageable.of(from, size, Sort.by(Sort.Direction.ASC, "id"));
+        List<ItemDto> list = repository.findByOwner_id(userId, pageable).stream()
+                .map(itemMapper::toItemDto)
+                .map(this::fillBookingInItemDto)
+                .map(this::addCommentsToItemDto)
+                .collect(Collectors.toList());
+        log.info("All items by userId {} has been returned", userId);
+        return list;
     }
 
     @Override
@@ -73,15 +89,21 @@ class ItemServiceImpl implements ItemService {
         if (itemDto.getOwner() == userId) {
             return addCommentsToItemDto(fillBookingInItemDto(itemDto));
         }
-        return addCommentsToItemDto(itemDto);
+        ItemDto dto = addCommentsToItemDto(itemDto);
+        log.info("Item with id{} has been returned", id);
+        return dto;
     }
 
     @Override
-    public List<ItemDto> search(String text) {
+    public List<ItemDto> search(String text, Integer from, Integer size) {
         if (text.equals("")) {
             return new ArrayList<>();
         }
-        return repository.search(text).stream().map(itemMapper::toItemDto).collect(Collectors.toList());
+        Pageable pageable = OffsetLimitPageable.of(from, size, Sort.by(Sort.Direction.ASC, "id"));
+        List<ItemDto> list = repository.search(text, pageable).stream().map(itemMapper::toItemDto)
+                .collect(Collectors.toList());
+        log.info("Search results for request {} has been returned", text);
+        return list;
     }
 
     @Override
@@ -131,7 +153,7 @@ class ItemServiceImpl implements ItemService {
     public CommentDto addComment(long userId, long itemId, CommentDto commentDto) {
         validateItemId(itemId);
         userService.validateUserId(userId);
-        List<Long> itemIds = bookingService.findAllByUser(userId, BookingState.PAST).stream()
+        List<Long> itemIds = bookingService.getPastByUser(userId).stream()
                 .map(BookingDto::getItem)
                 .map(ItemDto::getId)
                 .collect(Collectors.toList());

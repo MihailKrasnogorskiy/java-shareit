@@ -1,54 +1,42 @@
 package ru.practicum.shareit.booking.repository;
 
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
 import org.springframework.data.repository.CrudRepository;
 import ru.practicum.shareit.booking.model.Booking;
 import ru.practicum.shareit.booking.model.BookingStatus;
 
+import java.time.LocalDateTime;
 import java.util.List;
 
 /**
  * интерфейс репозитория бронирований
  */
 public interface BookingRepository extends CrudRepository<Booking, Long> {
-    /**
-     * поиск по id пользователя создавшего бронирование
-     *
-     * @param bookerId id пользователя создавшего бронирование
-     * @return список бронирований
-     */
-    List<Booking> findByBooker_id(long bookerId);
 
-    /**
-     * поиск по id пользователя создавшего бронирование с учётом статуса бронирования
-     *
-     * @param bookerId id пользователя создавшего бронирование
-     * @param status   статус бронирования
-     * @return список бронирований
-     */
-    List<Booking> findByBooker_idAndStatus(long bookerId, BookingStatus status);
+    List<Booking> findAllByBookerIdAndEndBeforeOrderByStartDesc(long userId, LocalDateTime end);
 
-    /**
-     * поиск по id владельца вещи
-     *
-     * @param ownerId id владельца вещи
-     * @return список бронирований
-     */
-    @Query(value = "select * from bookings as b join items as i on b.item_id=i.id where i.owner_id = ?1",
-            nativeQuery = true)
-    List<Booking> findByOwnerId(long ownerId);
+    Page<Booking> findAllByBookerIdOrderByStartDesc(long userId, Pageable pageable);
 
-    /**
-     * поиск по id владельца вещи с учётом статуса бронирования
-     *
-     * @param ownerId id владельца вещи
-     * @param status  статус бронирования
-     * @return список бронирований
-     */
-    @Query(value = "select * from bookings as b join items as i on b.item_id=i.id where i.owner_id = ?1 and b.status " +
-            "= ?2",
-            nativeQuery = true)
-    List<Booking> findByOwnerIdAndStatus(long ownerId, String status);
+    Page<Booking> findAllByBookerIdAndStartBeforeAndEndAfterOrderByStartDesc(long userId, LocalDateTime start,
+                                                                             LocalDateTime end, Pageable pageable);
+
+    Page<Booking> findAllByBookerIdAndEndBeforeOrderByStartDesc(long userId, LocalDateTime end, Pageable pageable);
+
+    Page<Booking> findAllByBookerIdAndStartAfterOrderByStartDesc(long userId, LocalDateTime start, Pageable pageable);
+
+    Page<Booking> findAllByBookerIdAndStatusOrderByStartDesc(long userId, BookingStatus status, Pageable pageable);
+
+    Page<Booking> findAllByItemOwnerIdOrderByStartDesc(long userId, Pageable pageable);
+
+    Page<Booking> findAllByItemOwnerIdAndStartBeforeAndEndAfterOrderByStartDesc(long userId, LocalDateTime start,
+                                                                                LocalDateTime end, Pageable pageable);
+
+    Page<Booking> findAllByItemOwnerIdAndEndBeforeOrderByStartDesc(long userId, LocalDateTime end, Pageable pageable);
+
+    Page<Booking> findAllByItemOwnerIdAndStartAfterOrderByStartDesc(long userId, LocalDateTime start, Pageable pageable);
+
+    Page<Booking> findAllByItemOwnerIdAndStatusOrderByStartDesc(long userId, BookingStatus status, Pageable pageable);
 
     /**
      * поиск по id вещи

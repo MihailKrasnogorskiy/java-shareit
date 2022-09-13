@@ -44,16 +44,18 @@ public interface BookingService {
      * @param state  вариант выборки
      * @return список dto бъектов бронирования
      */
-    List<BookingDto> findAllByUser(long userId, BookingState state);
+    List<BookingDto> findAllByUser(long userId, BookingState state, Integer from, Integer size);
 
     /**
      * возвращение всех бронирований владельца
      *
      * @param ownerId id владельца вещи
      * @param state   вариант выборки
+     * @param from
+     * @param size
      * @return список dto бъектов бронирования
      */
-    List<BookingDto> findAllByOwner(long ownerId, BookingState state);
+    List<BookingDto> findAllByOwner(long ownerId, BookingState state, Integer from, Integer size);
 
     /**
      * возвращение всех бронирований вещи
@@ -62,4 +64,12 @@ public interface BookingService {
      * @return список бронирований
      */
     List<BookingDto> findAllByItemId(long itemId);
+
+    /**
+     * возвращение завершённых бронирований пользователя
+     *
+     * @param userId id пользователя
+     * @return список бронирований
+     */
+    List<BookingDto> getPastByUser(Long userId);
 }

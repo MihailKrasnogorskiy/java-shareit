@@ -35,9 +35,11 @@ public class UserServiceImpl implements UserService {
     public List<UserDto> getAll() {
         List<User> result = new ArrayList<>();
         repository.findAll().forEach(result::add);
-        return result.stream()
+        List<UserDto> list = result.stream()
                 .map(UserMapper::toUserDto)
                 .collect(Collectors.toList());
+        log.info("All users list has been returned");
+        return list;
     }
 
     @Override
@@ -76,7 +78,9 @@ public class UserServiceImpl implements UserService {
     @Override
     public UserDto getById(long id) {
         validateUserId(id);
-        return UserMapper.toUserDto(repository.findById(id).get());
+        UserDto dto = UserMapper.toUserDto(repository.findById(id).get());
+        log.info("User with id {} has been returned", id);
+        return dto;
     }
 
     @Override

@@ -32,8 +32,10 @@ public class ItemController {
      * @return лист dto всех вещей пользователя
      */
     @GetMapping
-    public List<ItemDto> getAllByUserId(@RequestHeader("X-Sharer-User-Id") long userId) {
-        return service.getAllByUserId(userId);
+    public List<ItemDto> getAllByUserId(@RequestHeader("X-Sharer-User-Id") long userId,
+                                        @RequestParam(defaultValue = "0") Integer from,
+                                        @RequestParam(defaultValue = "20") Integer size) {
+        return service.getAllByUserId(userId, from, size);
     }
 
     /**
@@ -80,8 +82,10 @@ public class ItemController {
      * @return лист dto объектов доступных для аренды вещей, соответствующих запросу
      */
     @GetMapping("/search")
-    public List<ItemDto> search(@RequestParam String text) {
-        return service.search(text);
+    public List<ItemDto> search(@RequestParam String text,
+                                @RequestParam(defaultValue = "0") Integer from,
+                                @RequestParam(defaultValue = "20") Integer size) {
+        return service.search(text, from, size);
     }
 
     /**

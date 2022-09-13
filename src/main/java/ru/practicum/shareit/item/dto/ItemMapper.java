@@ -3,6 +3,7 @@ package ru.practicum.shareit.item.dto;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Component;
 import ru.practicum.shareit.item.model.Item;
+import ru.practicum.shareit.requests.repository.ItemRequestRepository;
 import ru.practicum.shareit.user.repository.UserRepository;
 
 import java.util.HashSet;
@@ -13,12 +14,12 @@ import java.util.HashSet;
 @Component
 public class ItemMapper {
     private final UserRepository userRepository;
-    private final CommentMapper commentMapper;
+    private final ItemRequestRepository requestRepository;
 
     @Autowired
-    public ItemMapper(UserRepository userRepository, CommentMapper commentMapper) {
+    public ItemMapper(UserRepository userRepository, ItemRequestRepository requestRepository) {
         this.userRepository = userRepository;
-        this.commentMapper = commentMapper;
+        this.requestRepository = requestRepository;
     }
 
     /**
@@ -28,7 +29,7 @@ public class ItemMapper {
      * @return dto объект вещи
      */
     public ItemDto toItemDto(Item item) {
-        return ItemDto.builder()
+        ItemDto dto = ItemDto.builder()
                 .id(item.getId())
                 .name(item.getName())
                 .description(item.getDescription())
@@ -38,6 +39,10 @@ public class ItemMapper {
                 .nextBooking(null)
                 .comments(new HashSet<>())
                 .build();
+        if (item.getRequest() != null) {
+            dto.setRequestId(item.getRequest().getId());
+        }
+        return dto;
     }
 
     /**
@@ -53,6 +58,26 @@ public class ItemMapper {
                 .available(itemDto.getAvailable())
                 .build();
         item.setOwner(userRepository.findById(itemDto.getOwner()).get());
+        if (itemDto.getRequestId() != null) {
+            item.setRequest(requestRepository.findById(itemDto.getRequestId()).get());
+        }
         return item;
+    }
+
+    /**
+     * соджания дто объекта вещи для добавления в запрос
+     *
+     * @param item - объект вещи
+     * @return дто объект вещи для добавления в запрос
+     */
+    public ItemDtoForRequest itemDtoForRequest(Item item) {
+        return ItemDtoForRequest.builder()
+                .id(item.getId())
+                .userId(item.getOwner().getId())
+                .name(item.getName())
+                .description(item.getDescription())
+                .available(item.getAvailable())
+                .requestId(item.getRequest().getId())
+                .build();
     }
 }

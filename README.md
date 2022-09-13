@@ -10,6 +10,6 @@
 
 Схема БД
 
-![This is an image](src/main/resources/shareItDB.jpg)
+![This is an image](server/src/main/resources/shareItDB.jpg)
 
 Выполнил Красногорский Михаил mikser256@yandex.ru

@@ -22,7 +22,7 @@ public class RequestController {
 
     @PostMapping
     public ResponseEntity<Object> create(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                   @RequestBody @Valid ItemRequestDto itemRequestDto) {
+                                         @RequestBody @Valid ItemRequestDto itemRequestDto) {
         log.info("ItemRequest {} has been created", itemRequestDto);
         return itemRequestClient.create(userId, itemRequestDto);
     }
@@ -35,15 +35,15 @@ public class RequestController {
 
     @GetMapping("/all")
     public ResponseEntity<Object> findAllOnPage(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                 @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
-                                                 @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
+                                                @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
+                                                @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
         log.info("Getting itemRequests other users is successful");
         return itemRequestClient.findAllOnPage(userId, from, size);
     }
 
     @GetMapping("/{requestId}")
     public ResponseEntity<Object> getById(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                                      @PathVariable("requestId") Long requestId) {
+                                          @PathVariable("requestId") Long requestId) {
         log.info("Get requestId={} is successful", requestId);
         return itemRequestClient.getById(userId, requestId);
     }

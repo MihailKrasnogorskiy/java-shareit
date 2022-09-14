@@ -53,7 +53,7 @@ public class BookingController {
                                                  @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
         BookingState state = BookingState.from(stateParam)
                 .orElseThrow(() -> new IllegalArgumentException("Unknown state: " + stateParam));
-        log.info("Get booking with state {}, ownerIdd={}, from={}, size={}", stateParam, ownerId, from, size);
+        log.info("Get booking with state {}, ownerId={}, from={}, size={}", stateParam, ownerId, from, size);
         return bookingClient.findAllByOwner(ownerId, state, from, size);
     }
 
@@ -61,7 +61,7 @@ public class BookingController {
     public ResponseEntity<Object> approve(@RequestHeader("X-Sharer-User-Id") long userId,
                                           @RequestParam Boolean approved,
                                           @PathVariable("bookingId") long bookingId) {
-        log.info("User witj userId={} approve booking {}, approve={}", userId, bookingId, approved);
+        log.info("User with userId={} approve booking {}, approve={}", userId, bookingId, approved);
         return bookingClient.approve(userId, approved, bookingId);
     }
 }

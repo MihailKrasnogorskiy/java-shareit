@@ -1,5 +1,6 @@
 package ru.practicum.shareit.booking.controller;
 
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
@@ -7,7 +8,8 @@ import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.CreatingBookingDto;
 import ru.practicum.shareit.booking.model.BookingState;
 import ru.practicum.shareit.booking.service.BookingService;
-import ru.practicum.shareit.exception.*;
+import ru.practicum.shareit.exception.ErrorResponse;
+import ru.practicum.shareit.exception.UnknownBookingStateException;
 
 import javax.validation.Valid;
 import java.util.List;
@@ -17,6 +19,7 @@ import java.util.List;
  */
 @RestController
 @RequestMapping(path = "/bookings")
+@Slf4j
 public class BookingController {
     private final BookingService service;
 
@@ -102,6 +105,7 @@ public class BookingController {
         if (state.equals(BookingState.UNSUPPORTED_STATUS)) {
             throw new UnknownBookingStateException();
         }
+        log.info("Get booking with state {}, userId={}, from={}, size={}", state, ownerId, from, size);
         return service.findAllByOwner(ownerId, state, from, size);
     }
 

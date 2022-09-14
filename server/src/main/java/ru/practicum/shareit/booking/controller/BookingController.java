@@ -2,16 +2,12 @@ package ru.practicum.shareit.booking.controller;
 
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.CreatingBookingDto;
 import ru.practicum.shareit.booking.model.BookingState;
 import ru.practicum.shareit.booking.service.BookingService;
-import ru.practicum.shareit.exception.ErrorResponse;
-import ru.practicum.shareit.exception.UnknownBookingStateException;
 
-import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -38,7 +34,7 @@ public class BookingController {
 
     @PostMapping
     public BookingDto create(@RequestHeader("X-Sharer-User-Id") long userId,
-                             @Valid @RequestBody CreatingBookingDto bookingDto) {
+                             @RequestBody CreatingBookingDto bookingDto) {
         return service.create(userId, bookingDto);
     }
 
@@ -72,7 +68,7 @@ public class BookingController {
      * возвращение всех бронирований пользователя
      *
      * @param userId id пользователя
-     * @param state  вариант выборки (ALL, CURRENT, PAST, FUTURE, WAITING, UNSUPPORTED_STATUS, REJECTED)
+     * @param state  вариант выборки (ALL, CURRENT, PAST, FUTURE, WAITING, REJECTED)
      * @param from   - начальный элемент
      * @param size   - размер выборки
      * @return список dto бъектов бронирования
@@ -82,9 +78,7 @@ public class BookingController {
                                           @RequestParam(defaultValue = "all") BookingState state,
                                           @RequestParam(defaultValue = "0") Integer from,
                                           @RequestParam(defaultValue = "20") Integer size) {
-        if (state.equals(BookingState.UNSUPPORTED_STATUS)) {
-            throw new UnknownBookingStateException();
-        }
+
         return service.findAllByUser(userId, state, from, size);
     }
 
@@ -92,7 +86,7 @@ public class BookingController {
      * возвращение всех бронирований владельца
      *
      * @param ownerId id владельца вещи
-     * @param state   вариант выборки (ALL, CURRENT, PAST, FUTURE, WAITING, UNSUPPORTED_STATUS, REJECTED)
+     * @param state   вариант выборки (ALL, CURRENT, PAST, FUTURE, WAITING, REJECTED)
      * @param from    - начальный элемент
      * @param size    - размер выборки
      * @return список dto бъектов бронирования
@@ -102,16 +96,9 @@ public class BookingController {
                                            @RequestParam(defaultValue = "all") BookingState state,
                                            @RequestParam(defaultValue = "0") Integer from,
                                            @RequestParam(defaultValue = "20") Integer size) {
-        if (state.equals(BookingState.UNSUPPORTED_STATUS)) {
-            throw new UnknownBookingStateException();
-        }
+
         log.info("Get booking with state {}, userId={}, from={}, size={}", state, ownerId, from, size);
         return service.findAllByOwner(ownerId, state, from, size);
     }
 
-    @ExceptionHandler
-    @ResponseStatus(HttpStatus.BAD_REQUEST)
-    public ErrorResponse handleIncorrectParameterException(final UnknownBookingStateException e) {
-        return new ErrorResponse(e.getMessage());
-    }
 }

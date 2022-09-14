@@ -2,7 +2,6 @@ package ru.practicum.shareit;
 
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Sort;
-import ru.practicum.shareit.exception.PageArgsValidationException;
 
 import java.util.Optional;
 
@@ -26,7 +25,6 @@ public class OffsetLimitPageable implements Pageable {
             from = 0;
             size = DEFAULT_PAGE_SIZE;
         }
-        validateOrThrowException(from, size);
         return new OffsetLimitPageable(saveUnboxing(from), saveUnboxing(size), Sort.unsorted());
     }
 
@@ -35,15 +33,9 @@ public class OffsetLimitPageable implements Pageable {
             from = 0;
             size = DEFAULT_PAGE_SIZE;
         }
-        validateOrThrowException(from, size);
         return new OffsetLimitPageable(saveUnboxing(from), saveUnboxing(size), sort);
     }
 
-    private static void validateOrThrowException(Integer from, Integer size) {
-        if (saveUnboxing(size) < 1 || saveUnboxing(from) < 0) {
-            throw new PageArgsValidationException();
-        }
-    }
 
     public static int saveUnboxing(Integer value) {
         return Optional.ofNullable(value).orElse(0);

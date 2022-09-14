@@ -34,7 +34,7 @@ public class BookingClient extends BaseClient {
      * возвращение всех бронирований пользователя
      *
      * @param userId id пользователя
-     * @param state  вариант выборки (ALL, CURRENT, PAST, FUTURE, WAITING, UNSUPPORTED_STATUS, REJECTED)
+     * @param state  вариант выборки (ALL, CURRENT, PAST, FUTURE, WAITING, REJECTED)
      * @param from   - начальный элемент
      * @param size   - размер выборки
      * @return список dto бъектов бронирования
@@ -74,7 +74,7 @@ public class BookingClient extends BaseClient {
      * возвращение всех бронирований владельца
      *
      * @param ownerId id владельца вещи
-     * @param state   вариант выборки (ALL, CURRENT, PAST, FUTURE, WAITING, UNSUPPORTED_STATUS, REJECTED)
+     * @param state   вариант выборки (ALL, CURRENT, PAST, FUTURE, WAITING, REJECTED)
      * @param from    - начальный элемент
      * @param size    - размер выборки
      * @return список dto бъектов бронирования

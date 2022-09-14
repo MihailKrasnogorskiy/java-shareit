@@ -7,7 +7,6 @@ import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.model.ItemUpdate;
 import ru.practicum.shareit.item.service.ItemService;
 
-import javax.validation.Valid;
 import java.util.List;
 
 /**
@@ -26,9 +25,10 @@ public class ItemController {
 
     /**
      * просмотр пользователем всех его вещей
+     *
      * @param userId - id пользователя
-     * @param from - начальное значение выборки
-     * @param size - размер выборки
+     * @param from   - начальное значение выборки
+     * @param size   - размер выборки
      * @return список dto-объектов вещей
      */
     @GetMapping
@@ -58,8 +58,8 @@ public class ItemController {
      * @return dto объект обновлённой вещи
      */
     @PatchMapping("{itemId}")
-    public ItemDto update(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long itemId, @Valid
-    @RequestBody ItemUpdate itemUpdate) {
+    public ItemDto update(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long itemId,
+                          @RequestBody ItemUpdate itemUpdate) {
         return service.update(userId, itemId, itemUpdate);
     }
 
@@ -71,7 +71,7 @@ public class ItemController {
      * @return dto объект созданой вещи
      */
     @PostMapping
-    public ItemDto create(@RequestHeader("X-Sharer-User-Id") long userId, @Valid @RequestBody ItemDto itemDto) {
+    public ItemDto create(@RequestHeader("X-Sharer-User-Id") long userId, @RequestBody ItemDto itemDto) {
         return service.create(userId, itemDto);
     }
 
@@ -111,7 +111,7 @@ public class ItemController {
      */
     @PostMapping("{itemId}/comment")
     public CommentDto addComment(@RequestHeader("X-Sharer-User-Id") long userId, @PathVariable long itemId,
-                                 @Valid @RequestBody CommentDto comment) {
+                                 @RequestBody CommentDto comment) {
         return service.addComment(userId, itemId, comment);
 
     }

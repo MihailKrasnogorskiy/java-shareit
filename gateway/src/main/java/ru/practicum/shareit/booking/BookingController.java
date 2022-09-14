@@ -28,7 +28,7 @@ public class BookingController {
      * возвращение всех бронирований пользователя
      *
      * @param userId     id пользователя
-     * @param stateParam вариант выборки (ALL, CURRENT, PAST, FUTURE, WAITING, UNSUPPORTED_STATUS, REJECTED)
+     * @param stateParam вариант выборки (ALL, CURRENT, PAST, FUTURE, WAITING, REJECTED)
      * @param from       - начальный элемент
      * @param size       - размер выборки
      * @return список dto бъектов бронирования
@@ -76,7 +76,7 @@ public class BookingController {
      * возвращение всех бронирований владельца
      *
      * @param ownerId    id владельца вещи
-     * @param stateParam вариант выборки (ALL, CURRENT, PAST, FUTURE, WAITING, UNSUPPORTED_STATUS, REJECTED)
+     * @param stateParam вариант выборки (ALL, CURRENT, PAST, FUTURE, WAITING, REJECTED)
      * @param from       - начальный элемент
      * @param size       - размер выборки
      * @return список dto бъектов бронирования

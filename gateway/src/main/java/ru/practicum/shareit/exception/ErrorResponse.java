@@ -1,6 +1,9 @@
 package ru.practicum.shareit.exception;
 
-// класс ошибки
+/**
+ * класс ошибки
+ */
+
 public class ErrorResponse {
     private final String error;
 

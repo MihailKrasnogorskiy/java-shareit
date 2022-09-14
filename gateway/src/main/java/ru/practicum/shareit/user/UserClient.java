@@ -11,6 +11,9 @@ import ru.practicum.shareit.client.BaseClient;
 import ru.practicum.shareit.user.dto.UserDto;
 import ru.practicum.shareit.user.dto.UserUpdate;
 
+/**
+ * клиент для отправки запросов в UserController shareIt-server
+ */
 @Service
 public class UserClient extends BaseClient {
     private static final String API_PREFIX = "/users";
@@ -25,22 +28,50 @@ public class UserClient extends BaseClient {
         );
     }
 
+    /**
+     * создание пользователя
+     *
+     * @param userDto - объект пользователя
+     * @return dto объект пользователя
+     */
     public ResponseEntity<Object> create(UserDto userDto) {
         return post("", userDto);
     }
 
+    /**
+     * возвращение пользователя по id
+     *
+     * @param userId id пользователя
+     * @return dto объект пользователя
+     */
     public ResponseEntity<Object> update(long userId, UserUpdate userDto) {
         return patch("/" + userId, userDto);
     }
 
+    /**
+     * возвращение пользователя по id
+     *
+     * @param userId id пользователя
+     * @return dto объект пользователя
+     */
     public ResponseEntity<Object> getById(long userId) {
         return get("/" + userId);
     }
 
+    /**
+     * удадение пользователя
+     *
+     * @param userId - id пользователя
+     */
     public ResponseEntity<Object> deleteById(long userId) {
         return delete("/" + userId);
     }
 
+    /**
+     * возвращение списка всех пользователей
+     *
+     * @return список dto объектов пользователей
+     */
     public ResponseEntity<Object> getAll() {
         return get("");
     }

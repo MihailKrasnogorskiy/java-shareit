@@ -7,6 +7,9 @@ import org.springframework.web.bind.annotation.RestControllerAdvice;
 
 import javax.validation.ConstraintViolationException;
 
+/**
+ * контроллер обработки исключений
+ */
 @RestControllerAdvice
 public class DefaultAdvice {
 

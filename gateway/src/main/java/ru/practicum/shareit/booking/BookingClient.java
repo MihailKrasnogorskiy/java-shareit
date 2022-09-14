@@ -7,12 +7,15 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.client.HttpComponentsClientHttpRequestFactory;
 import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
-import ru.practicum.shareit.booking.dto.BookItemRequestDto;
+import ru.practicum.shareit.booking.dto.BookingDto;
 import ru.practicum.shareit.booking.dto.BookingState;
 import ru.practicum.shareit.client.BaseClient;
 
 import java.util.Map;
 
+/**
+ * клиент для отправки запросов в BookingController shareIt-server
+ */
 @Service
 public class BookingClient extends BaseClient {
     private static final String API_PREFIX = "/bookings";
@@ -27,7 +30,16 @@ public class BookingClient extends BaseClient {
         );
     }
 
-    public ResponseEntity<Object> getBookings(long userId, BookingState state, Integer from, Integer size) {
+    /**
+     * возвращение всех бронирований пользователя
+     *
+     * @param userId id пользователя
+     * @param state  вариант выборки (ALL, CURRENT, PAST, FUTURE, WAITING, UNSUPPORTED_STATUS, REJECTED)
+     * @param from   - начальный элемент
+     * @param size   - размер выборки
+     * @return список dto бъектов бронирования
+     */
+    public ResponseEntity<Object> findAllByUser(long userId, BookingState state, Integer from, Integer size) {
         Map<String, Object> parameters = Map.of(
                 "state", state.name(),
                 "from", from,
@@ -36,15 +48,37 @@ public class BookingClient extends BaseClient {
         return get("?state={state}&from={from}&size={size}", userId, parameters);
     }
 
-
-    public ResponseEntity<Object> bookItem(long userId, BookItemRequestDto requestDto) {
-        return post("", userId, requestDto);
+    /**
+     * создание бронирования
+     *
+     * @param userId     id пользователя
+     * @param bookingDto объект для создания бронирования
+     * @return dto бъект бронирования
+     */
+    public ResponseEntity<Object> create(long userId, BookingDto bookingDto) {
+        return post("", userId, bookingDto);
     }
 
-    public ResponseEntity<Object> getBooking(long userId, Long bookingId) {
+    /**
+     * возвращение бронирования по id
+     *
+     * @param userId    id пользователя
+     * @param bookingId id бронирования
+     * @return dto бъект бронирования
+     */
+    public ResponseEntity<Object> findById(long userId, Long bookingId) {
         return get("/" + bookingId, userId);
     }
 
+    /**
+     * возвращение всех бронирований владельца
+     *
+     * @param ownerId id владельца вещи
+     * @param state   вариант выборки (ALL, CURRENT, PAST, FUTURE, WAITING, UNSUPPORTED_STATUS, REJECTED)
+     * @param from    - начальный элемент
+     * @param size    - размер выборки
+     * @return список dto бъектов бронирования
+     */
     public ResponseEntity<Object> findAllByOwner(long ownerId, BookingState state, Integer from, Integer size) {
         Map<String, Object> parameters = Map.of(
                 "state", state.name(),
@@ -54,6 +88,14 @@ public class BookingClient extends BaseClient {
         return get("/owner?state={state}&from={from}&size={size}", ownerId, parameters);
     }
 
+    /**
+     * измнение статуса бронирования
+     *
+     * @param userId    id пользователя
+     * @param approved  статус бронирования
+     * @param bookingId id бронирования
+     * @return dto бъект бронирования
+     */
     public ResponseEntity<Object> approve(long userId, Boolean approved, long bookingId) {
         return patch("/" + bookingId + "?approved=" + approved, userId);
     }

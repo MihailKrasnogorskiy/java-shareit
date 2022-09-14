@@ -25,11 +25,11 @@ public class ItemController {
     }
 
     /**
-     * просмотр владельцем списка всех его вещей
-     * *
-     *
-     * @param userId - id владельца вещей
-     * @return лист dto всех вещей пользователя
+     * просмотр пользователем всех его вещей
+     * @param userId - id пользователя
+     * @param from - начальное значение выборки
+     * @param size - размер выборки
+     * @return список dto-объектов вещей
      */
     @GetMapping
     public List<ItemDto> getAllByUserId(@RequestHeader("X-Sharer-User-Id") long userId,
@@ -79,6 +79,8 @@ public class ItemController {
      * метод для текстового поиска вещей по нименованию или описанию без учёта регистра
      *
      * @param text - текст поиска
+     * @param from - начальное значение выборки
+     * @param size - размер выборки
      * @return лист dto объектов доступных для аренды вещей, соответствующих запросу
      */
     @GetMapping("/search")

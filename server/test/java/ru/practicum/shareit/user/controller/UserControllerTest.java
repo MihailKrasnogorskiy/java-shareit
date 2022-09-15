@@ -95,15 +95,6 @@ class UserControllerTest {
         this.mockMvc.perform(post("/users").content(mapper.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isConflict());
-        user.setEmail("vova.ru");
-        this.mockMvc.perform(post("/users").content(mapper.writeValueAsString(user))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-        user.setEmail("mail@mail.ru");
-        user.setName("");
-        this.mockMvc.perform(post("/users").content(mapper.writeValueAsString(user))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
     }
 
     /**
@@ -137,20 +128,10 @@ class UserControllerTest {
         assertEquals("Vasya", controller.getById(1).getName());
         assertEquals("vasya@gmail.com", controller.getById(1).getEmail());
         user.setName(null);
-        user.setEmail("vasya.com");
-        this.mockMvc.perform(patch("/users/1").content(mapper.writeValueAsString(user))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-        user.setName(null);
         user.setEmail("vasya@gmail.com");
         this.mockMvc.perform(patch("/users/1").content(mapper.writeValueAsString(user))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isConflict());
-        user.setName("");
-        user.setEmail(null);
-        this.mockMvc.perform(patch("/users/1").content(mapper.writeValueAsString(user))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
     }
 
     /**

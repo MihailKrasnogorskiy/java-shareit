@@ -101,8 +101,8 @@ public class ItemClient extends BaseClient {
     /**
      * добавление комемнтария
      *
-     * @param userId  id пользователя
-     * @param itemId  id вещи
+     * @param userId     id пользователя
+     * @param itemId     id вещи
      * @param commentDto dto объект комментария
      * @return dto объект комментария
      */

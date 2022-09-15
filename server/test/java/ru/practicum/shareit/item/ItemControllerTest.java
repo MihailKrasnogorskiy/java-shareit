@@ -167,16 +167,6 @@ class ItemControllerTest {
                         .content(mapper.writeValueAsString(itemUpdate))
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isNotFound());
-        itemUpdate.setName("");
-        this.mockMvc.perform(patch("/items/1").header("X-Sharer-User-Id", 1)
-                        .content(mapper.writeValueAsString(itemUpdate))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-        itemUpdate.setDescription("");
-        this.mockMvc.perform(patch("/items/1").header("X-Sharer-User-Id", 1)
-                        .content(mapper.writeValueAsString(itemUpdate))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
     }
 
     /**
@@ -191,33 +181,6 @@ class ItemControllerTest {
                         .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(content().json(mapper.writeValueAsString(itemDto1)));
-        itemDto.setName(null);
-        this.mockMvc.perform(post("/items").header("X-Sharer-User-Id", 1)
-                        .content(mapper.writeValueAsString(itemDto))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-        itemDto.setName("");
-        this.mockMvc.perform(post("/items").header("X-Sharer-User-Id", 1)
-                        .content(mapper.writeValueAsString(itemDto))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-        itemDto.setName("Машина");
-        itemDto.setAvailable(null);
-        this.mockMvc.perform(post("/items").header("X-Sharer-User-Id", 1)
-                        .content(mapper.writeValueAsString(itemDto))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-        itemDto.setDescription("");
-        itemDto.setAvailable(false);
-        this.mockMvc.perform(post("/items").header("X-Sharer-User-Id", 1)
-                        .content(mapper.writeValueAsString(itemDto))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
-        itemDto.setDescription(null);
-        this.mockMvc.perform(post("/items").header("X-Sharer-User-Id", 1)
-                        .content(mapper.writeValueAsString(itemDto))
-                        .contentType(MediaType.APPLICATION_JSON))
-                .andExpect(status().isBadRequest());
     }
 
     /**

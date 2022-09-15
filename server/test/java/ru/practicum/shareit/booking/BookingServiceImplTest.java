@@ -208,10 +208,6 @@ public class BookingServiceImplTest {
         list = bookingService.findAllByUser(2L, BookingState.WAITING, 0, 10);
         assertEquals(3, list.size());
         assertEquals(2, list.get(0).getId());
-        Throwable thrown = assertThrows(PageArgsValidationException.class, () -> {
-            bookingService.findAllByUser(2L, BookingState.ALL, -1, 0);
-        });
-        assertEquals("from must be positive and size must be more then 0", thrown.getMessage());
     }
 
     /**

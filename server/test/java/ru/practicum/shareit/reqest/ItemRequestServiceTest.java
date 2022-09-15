@@ -153,10 +153,6 @@ public class ItemRequestServiceTest {
         assertNotNull(list.get(0).getCreated());
         assertEquals("test2", list.get(0).getDescription());
         assertEquals(0, list.get(0).getItems().size());
-        Throwable thrown = assertThrows(PageArgsValidationException.class, () -> {
-            service.findAllOnPage(2L, 0, -2);
-        });
-        assertEquals("from must be positive and size must be more then 0", thrown.getMessage());
     }
 
     /**

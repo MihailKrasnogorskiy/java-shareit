@@ -52,7 +52,7 @@ public class BookingController {
      * @return dto бъект бронирования
      */
     @PostMapping
-    public ResponseEntity<Object> create(@RequestHeader("X-Sharer-User-Id") long userId,
+    public ResponseEntity<Object> create(@Positive @RequestHeader("X-Sharer-User-Id") long userId,
                                          @RequestBody @Valid BookingDto bookingDto) {
         log.info("Creating booking {}, userId={}", bookingDto, userId);
         return bookingClient.create(userId, bookingDto);
@@ -66,7 +66,7 @@ public class BookingController {
      * @return dto бъект бронирования
      */
     @GetMapping("/{bookingId}")
-    public ResponseEntity<Object> findById(@RequestHeader("X-Sharer-User-Id") long userId,
+    public ResponseEntity<Object> findById(@Positive @RequestHeader("X-Sharer-User-Id") long userId,
                                            @Positive @PathVariable("bookingId") Long bookingId) {
         log.info("Get booking {}, userId={}", bookingId, userId);
         return bookingClient.findById(userId, bookingId);
@@ -82,7 +82,7 @@ public class BookingController {
      * @return список dto бъектов бронирования
      */
     @GetMapping("/owner")
-    public ResponseEntity<Object> findAllByOwner(@RequestHeader("X-Sharer-User-Id") long ownerId,
+    public ResponseEntity<Object> findAllByOwner(@Positive @RequestHeader("X-Sharer-User-Id") long ownerId,
                                                  @RequestParam(name = "state", defaultValue = "all") String stateParam,
                                                  @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
                                                  @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
@@ -101,7 +101,7 @@ public class BookingController {
      * @return dto бъект бронирования
      */
     @PatchMapping("/{bookingId}")
-    public ResponseEntity<Object> approve(@RequestHeader("X-Sharer-User-Id") long userId,
+    public ResponseEntity<Object> approve(@Positive @RequestHeader("X-Sharer-User-Id") long userId,
                                           @RequestParam Boolean approved,
                                           @Positive @PathVariable("bookingId") long bookingId) {
         log.info("User with userId={} approve booking {}, approve={}", userId, bookingId, approved);

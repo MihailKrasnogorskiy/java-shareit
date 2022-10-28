@@ -1,4 +1,4 @@
-package java.ru.practicum.shareit.booking;
+package ru.practicum.shareit.booking;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -61,27 +61,19 @@ public class BookingServiceImplTest {
         assertEquals(1, dto.getItem().getOwner());
         assertEquals(2, dto.getBooker().getId());
         assertEquals(BookingStatus.WAITING, dto.getStatus());
-        Throwable thrown = assertThrows(NotFoundException.class, () -> {
-            bookingService.create(1L, creatingDto);
-        });
+        Throwable thrown = assertThrows(NotFoundException.class, () -> bookingService.create(1L, creatingDto));
         assertEquals("You cannot book your item", thrown.getMessage());
-        thrown = assertThrows(NotFoundException.class, () -> {
-            bookingService.create(99L, creatingDto);
-        });
+        thrown = assertThrows(NotFoundException.class, () -> bookingService.create(99L, creatingDto));
         assertNotNull(thrown.getMessage());
         creatingDto.setItemId(99L);
-        thrown = assertThrows(NotFoundException.class, () -> {
-            bookingService.create(2L, creatingDto);
-        });
+        thrown = assertThrows(NotFoundException.class, () -> bookingService.create(2L, creatingDto));
         assertNotNull(thrown.getMessage());
         ItemUpdate itemDto = ItemUpdate.builder()
                 .available(false)
                 .build();
         itemService.update(1L, 1L, itemDto);
         creatingDto.setItemId(1L);
-        thrown = assertThrows(ItemUnavailableException.class, () -> {
-            bookingService.create(2L, creatingDto);
-        });
+        thrown = assertThrows(ItemUnavailableException.class, () -> bookingService.create(2L, creatingDto));
         assertEquals("This item is not available", thrown.getMessage());
     }
 
@@ -90,9 +82,7 @@ public class BookingServiceImplTest {
      */
     @Test
     void test22_approve() {
-        Throwable thrown = assertThrows(NotFoundException.class, () -> {
-            bookingService.approve(1, false, 1);
-        });
+        Throwable thrown = assertThrows(NotFoundException.class, () -> bookingService.approve(1, false, 1));
         assertEquals("This booking not found", thrown.getMessage());
         bookingService.create(2, creatingDto);
         BookingDto dto = bookingService.approve(1, true, 1);
@@ -103,17 +93,11 @@ public class BookingServiceImplTest {
         assertEquals(1, dto.getItem().getOwner());
         assertEquals(2, dto.getBooker().getId());
         assertEquals(BookingStatus.APPROVED, dto.getStatus());
-        thrown = assertThrows(BookingApprovedException.class, () -> {
-            bookingService.approve(1, false, 1);
-        });
+        thrown = assertThrows(BookingApprovedException.class, () -> bookingService.approve(1, false, 1));
         assertEquals("You have already replied to this booking", thrown.getMessage());
-        thrown = assertThrows(OwnerValidationException.class, () -> {
-            bookingService.approve(2, false, 1);
-        });
+        thrown = assertThrows(OwnerValidationException.class, () -> bookingService.approve(2, false, 1));
         assertEquals("You are not item owner", thrown.getMessage());
-        thrown = assertThrows(NotFoundException.class, () -> {
-            bookingService.approve(3, false, 1);
-        });
+        thrown = assertThrows(NotFoundException.class, () -> bookingService.approve(3, false, 1));
         assertNotNull(thrown.getMessage());
         clearEnvironment();
         createEnvironment();
@@ -135,9 +119,7 @@ public class BookingServiceImplTest {
     void test23_validationEndDate() {
         creatingDto.setEnd(start);
         creatingDto.setStart(end);
-        Throwable thrown = assertThrows(EndDateValidateException.class, () -> {
-            bookingService.create(2, creatingDto);
-        });
+        Throwable thrown = assertThrows(EndDateValidateException.class, () -> bookingService.create(2, creatingDto));
         assertEquals("EndDate is before StartDate", thrown.getMessage());
         creatingDto.setStart(start);
         creatingDto.setEnd(end);
@@ -149,9 +131,7 @@ public class BookingServiceImplTest {
     @Test
     void test24_findById() {
         bookingService.create(2, creatingDto);
-        Throwable thrown = assertThrows(NotFoundException.class, () -> {
-            bookingService.findById(3, 1);
-        });
+        Throwable thrown = assertThrows(NotFoundException.class, () -> bookingService.findById(3, 1));
         assertNotNull(thrown.getMessage());
         BookingDto dto = bookingService.findById(2, 1);
         assertEquals(1, dto.getId());
@@ -174,9 +154,7 @@ public class BookingServiceImplTest {
                 .email("vika@mail.ru")
                 .build();
         userService.create(user);
-        thrown = assertThrows(BookerValidationException.class, () -> {
-            bookingService.findById(3, 1);
-        });
+        thrown = assertThrows(BookerValidationException.class, () -> bookingService.findById(3, 1));
         assertEquals("You are not booker", thrown.getMessage());
     }
 

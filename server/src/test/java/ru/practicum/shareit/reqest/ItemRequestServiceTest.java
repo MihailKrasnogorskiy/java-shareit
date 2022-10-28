@@ -1,4 +1,4 @@
-package java.ru.practicum.shareit.reqest;
+package ru.practicum.shareit.reqest;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
@@ -7,6 +7,7 @@ import org.junit.jupiter.api.TestInstance;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.jdbc.core.JdbcTemplate;
+import org.springframework.transaction.annotation.Transactional;
 import ru.practicum.shareit.exception.NotFoundException;
 import ru.practicum.shareit.item.dto.ItemDto;
 import ru.practicum.shareit.item.service.ItemService;
@@ -42,6 +43,7 @@ public class ItemRequestServiceTest {
      * создание запроса
      */
     @Test
+    @Transactional
     void test32_create() {
         createdDto.setDescription("test");
         ItemRequestDto dto = service.create(2L, createdDto);
@@ -49,9 +51,7 @@ public class ItemRequestServiceTest {
         assertNotNull(dto.getCreated());
         assertEquals("test", dto.getDescription());
         assertEquals(0, dto.getItems().size());
-        Throwable thrown = assertThrows(NotFoundException.class, () -> {
-            service.create(99L, createdDto);
-        });
+        Throwable thrown = assertThrows(NotFoundException.class, () -> service.create(99L, createdDto));
         assertNotNull(thrown.getMessage());
     }
 
@@ -59,6 +59,7 @@ public class ItemRequestServiceTest {
      * поиск по id
      */
     @Test
+    @Transactional
     void test33_getById() {
         createdDto.setDescription("test");
         service.create(2L, createdDto);
@@ -77,9 +78,7 @@ public class ItemRequestServiceTest {
         assertEquals("test", dto.getDescription());
         assertEquals(1, dto.getItems().size());
         assertEquals(2, dto.getItems().get(0).getId());
-        Throwable thrown = assertThrows(NotFoundException.class, () -> {
-            service.getById(22L, 2L);
-        });
+        Throwable thrown = assertThrows(NotFoundException.class, () -> service.getById(22L, 2L));
         assertEquals("This request not found", thrown.getMessage());
     }
 
@@ -87,6 +86,7 @@ public class ItemRequestServiceTest {
      * поиск всех запросов пользователя
      */
     @Test
+    @Transactional
     void test34_findAllByUser() {
         createdDto.setDescription("test");
         service.create(2L, createdDto);
@@ -123,6 +123,7 @@ public class ItemRequestServiceTest {
      * поиск всех запросов других пользователей
      */
     @Test
+    @Transactional
     void test35_findAllOnPage() {
         createdDto.setDescription("test");
         service.create(1L, createdDto);
@@ -184,25 +185,13 @@ public class ItemRequestServiceTest {
      */
     @AfterEach
     void clearEnvironment() {
-        String query = "SET REFERENTIAL_INTEGRITY = FALSE";
-        jdbcTemplate.update(query);
-        query = "TRUNCATE TABLE users ";
-        jdbcTemplate.update(query);
-        query = "ALTER TABLE users ALTER COLUMN id RESTART WITH 1";
-        jdbcTemplate.update(query);
-        query = "TRUNCATE TABLE items ";
+        String query = "ALTER TABLE users ALTER COLUMN id RESTART WITH 1";
         jdbcTemplate.update(query);
         query = "ALTER TABLE items ALTER COLUMN id RESTART WITH 1";
         jdbcTemplate.update(query);
-        query = "TRUNCATE TABLE bookings ";
-        jdbcTemplate.update(query);
         query = "ALTER TABLE bookings ALTER COLUMN id RESTART WITH 1";
         jdbcTemplate.update(query);
-        query = "TRUNCATE TABLE requests ";
-        jdbcTemplate.update(query);
         query = "ALTER TABLE requests ALTER COLUMN id RESTART WITH 1";
-        jdbcTemplate.update(query);
-        query = "SET REFERENTIAL_INTEGRITY = TRUE";
         jdbcTemplate.update(query);
     }
 }

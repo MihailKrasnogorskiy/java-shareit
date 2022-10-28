@@ -1,4 +1,4 @@
-package java.ru.practicum.shareit.reqest;
+package ru.practicum.shareit.reqest;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -56,8 +56,6 @@ public class ItemRequestControllerTest {
 
     /**
      * создание запроса
-     *
-     * @throws Exception
      */
     @Test
     void test28_create() throws Exception {
@@ -82,8 +80,6 @@ public class ItemRequestControllerTest {
 
     /**
      * поиск по id
-     *
-     * @throws Exception
      */
     @Test
     void test29_getById() throws Exception {
@@ -103,8 +99,6 @@ public class ItemRequestControllerTest {
 
     /**
      * поиск всех запросов пользователя
-     *
-     * @throws Exception
      */
     @Test
     void test30_findAllByUser() throws Exception {
@@ -124,8 +118,6 @@ public class ItemRequestControllerTest {
 
     /**
      * поиск всех хапросов других пользователей
-     *
-     * @throws Exception
      */
     @Test
     void test31_findAllOnPage() throws Exception {

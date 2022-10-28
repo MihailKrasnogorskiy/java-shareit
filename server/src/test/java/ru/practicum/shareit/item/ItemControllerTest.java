@@ -1,4 +1,4 @@
-package java.ru.practicum.shareit.item;
+package ru.practicum.shareit.item;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.*;
@@ -149,6 +149,12 @@ class ItemControllerTest {
                 .description("Honda 10")
                 .available(true)
                 .build();
+        itemUpdate.setName("");
+        this.mockMvc.perform(patch("/items/1").header("X-Sharer-User-Id", 1)
+                        .content(mapper.writeValueAsString(itemUpdate))
+                        .contentType(MediaType.APPLICATION_JSON))
+                .andExpect(status().isBadRequest());
+        itemUpdate.setName("Лодочный мотор");
         itemDto1.setName("Лодочный мотор");
         itemDto1.setDescription("Honda 10");
         this.mockMvc.perform(patch("/items/1").header("X-Sharer-User-Id", 1)
@@ -277,9 +283,8 @@ class ItemControllerTest {
         assertEquals(1, list.get(0).getId());
         assertEquals(1, list.get(0).getItem().getId());
         assertEquals("Comment for item 1", list.get(0).getText());
-        Throwable thrown = assertThrows(CommentatorValidationException.class, () -> {
-            service.addComment(1L, 1L, CommentDto.builder().text("text").build());
-        });
+        Throwable thrown = assertThrows(CommentatorValidationException.class, () -> service.addComment(1L, 1L,
+                CommentDto.builder().text("text").build()));
         assertEquals("You are not booker", thrown.getMessage());
     }
 

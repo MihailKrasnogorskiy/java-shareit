@@ -1,4 +1,4 @@
-package java.ru.practicum.shareit.booking;
+package ru.practicum.shareit.booking;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -64,8 +64,6 @@ public class BookingControllerTest {
 
     /**
      * тест создания бронирования
-     *
-     * @throws Exception
      */
     @Test
     void test16_createNewBooking() throws Exception {
@@ -96,8 +94,6 @@ public class BookingControllerTest {
 
     /**
      * тест подтверждения/отклонения бронирования
-     *
-     * @throws Exception
      */
     @Test
     void test17_approve() throws Exception {
@@ -121,8 +117,6 @@ public class BookingControllerTest {
 
     /**
      * тест поиска по id
-     *
-     * @throws Exception
      */
     @Test
     void test18_findById() throws Exception {
@@ -145,8 +139,6 @@ public class BookingControllerTest {
 
     /**
      * тест поиска всех бронирований пользователя
-     *
-     * @throws Exception
      */
     @Test
     void test19_findAllByUser() throws Exception {
@@ -170,8 +162,6 @@ public class BookingControllerTest {
 
     /**
      * тест поиска всех бронирований бладельца вещи
-     *
-     * @throws Exception
      */
     @Test
     void test20_findAllByOwner() throws Exception {

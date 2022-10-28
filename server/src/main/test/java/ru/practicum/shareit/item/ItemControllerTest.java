@@ -1,4 +1,4 @@
-package ru.practicum.shareit.item;
+package java.ru.practicum.shareit.item;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.*;

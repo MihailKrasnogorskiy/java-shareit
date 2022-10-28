@@ -1,4 +1,4 @@
-package ru.practicum.shareit.reqest;
+package java.ru.practicum.shareit.reqest;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;

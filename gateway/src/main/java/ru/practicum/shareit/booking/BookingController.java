@@ -34,7 +34,7 @@ public class BookingController {
      * @return список dto бъектов бронирования
      */
     @GetMapping
-    public ResponseEntity<Object> findAllByUser(@RequestHeader("X-Sharer-User-Id") long userId,
+    public ResponseEntity<Object> findAllByUser(@Positive @RequestHeader("X-Sharer-User-Id") long userId,
                                                 @RequestParam(name = "state", defaultValue = "all") String stateParam,
                                                 @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
                                                 @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
@@ -67,7 +67,7 @@ public class BookingController {
      */
     @GetMapping("/{bookingId}")
     public ResponseEntity<Object> findById(@RequestHeader("X-Sharer-User-Id") long userId,
-                                           @PathVariable("bookingId") Long bookingId) {
+                                           @Positive @PathVariable("bookingId") Long bookingId) {
         log.info("Get booking {}, userId={}", bookingId, userId);
         return bookingClient.findById(userId, bookingId);
     }
@@ -103,7 +103,7 @@ public class BookingController {
     @PatchMapping("/{bookingId}")
     public ResponseEntity<Object> approve(@RequestHeader("X-Sharer-User-Id") long userId,
                                           @RequestParam Boolean approved,
-                                          @PathVariable("bookingId") long bookingId) {
+                                          @Positive @PathVariable("bookingId") long bookingId) {
         log.info("User with userId={} approve booking {}, approve={}", userId, bookingId, approved);
         return bookingClient.approve(userId, approved, bookingId);
     }

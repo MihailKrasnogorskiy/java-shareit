@@ -31,7 +31,7 @@ public class RequestController {
      * @return дто объект запроса
      */
     @PostMapping
-    public ResponseEntity<Object> create(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public ResponseEntity<Object> create(@Positive @RequestHeader("X-Sharer-User-Id") Long userId,
                                          @RequestBody @Valid ItemRequestDto itemRequestDto) {
         log.info("ItemRequest {} has been created", itemRequestDto);
         return itemRequestClient.create(userId, itemRequestDto);
@@ -44,7 +44,7 @@ public class RequestController {
      * @return список дто объектов всех запросов пользователя
      */
     @GetMapping
-    public ResponseEntity<Object> findAllByUser(@RequestHeader("X-Sharer-User-Id") Long userId) {
+    public ResponseEntity<Object> findAllByUser(@Positive @RequestHeader("X-Sharer-User-Id") Long userId) {
         log.info("Getting itemRequests for ownerId={} is successful", userId);
         return itemRequestClient.findAllByUser(userId);
     }
@@ -58,7 +58,7 @@ public class RequestController {
      * @return список всех запросов других пользователей
      */
     @GetMapping("/all")
-    public ResponseEntity<Object> findAllOnPage(@RequestHeader("X-Sharer-User-Id") Long userId,
+    public ResponseEntity<Object> findAllOnPage(@Positive @RequestHeader("X-Sharer-User-Id") Long userId,
                                                 @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
                                                 @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
         log.info("Getting itemRequests other users is successful");
@@ -73,8 +73,8 @@ public class RequestController {
      * @return дто объект запроса
      */
     @GetMapping("/{requestId}")
-    public ResponseEntity<Object> getById(@RequestHeader("X-Sharer-User-Id") Long userId,
-                                          @PathVariable("requestId") Long requestId) {
+    public ResponseEntity<Object> getById(@Positive @RequestHeader("X-Sharer-User-Id") Long userId,
+                                          @Positive @PathVariable("requestId") Long requestId) {
         log.info("Get requestId={} is successful", requestId);
         return itemRequestClient.getById(userId, requestId);
     }

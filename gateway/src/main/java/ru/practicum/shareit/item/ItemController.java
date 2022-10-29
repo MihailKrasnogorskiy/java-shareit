@@ -36,7 +36,7 @@ public class ItemController {
      * @return список dto-объектов вещей
      */
     @GetMapping
-    public ResponseEntity<Object> findAllByUser(@RequestHeader("X-Sharer-User-Id") long userId,
+    public ResponseEntity<Object> findAllByUser(@Positive @RequestHeader("X-Sharer-User-Id") long userId,
                                                 @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
                                                 @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
         log.info("Get items with userId={}, from={}, size={}", userId, from, size);
@@ -50,8 +50,8 @@ public class ItemController {
      * @return dto объект вещи
      */
     @GetMapping("/{itemId}")
-    public ResponseEntity<Object> getById(@RequestHeader("X-Sharer-User-Id") long userId,
-                                          @PathVariable Long itemId) {
+    public ResponseEntity<Object> getById(@Positive @RequestHeader("X-Sharer-User-Id") long userId,
+                                          @Positive @PathVariable Long itemId) {
         log.info("Get item {}, userId={}", itemId, userId);
         return itemClient.getById(userId, itemId);
     }
@@ -64,7 +64,7 @@ public class ItemController {
      * @return dto объект созданой вещи
      */
     @PostMapping
-    public ResponseEntity<Object> createNewItem(@RequestHeader("X-Sharer-User-Id") long userId,
+    public ResponseEntity<Object> createNewItem(@Positive @RequestHeader("X-Sharer-User-Id") long userId,
                                                 @RequestBody @Valid ItemDto itemDto) {
         log.info("Item {} has been created", itemDto);
         return itemClient.create(userId, itemDto);
@@ -79,9 +79,9 @@ public class ItemController {
      * @return dto объект обновлённой вещи
      */
     @PatchMapping("/{itemId}")
-    public ResponseEntity<Object> updateItem(@RequestHeader("X-Sharer-User-Id") long userId,
+    public ResponseEntity<Object> updateItem(@Positive @RequestHeader("X-Sharer-User-Id") long userId,
                                              @RequestBody ItemUpdate itemDto,
-                                             @PathVariable("itemId") Long itemId) {
+                                             @Positive @PathVariable("itemId") Long itemId) {
         log.info("Item with id={} has been updated", itemId);
         return itemClient.update(userId, itemDto, itemId);
     }
@@ -95,7 +95,7 @@ public class ItemController {
      * @return лист dto объектов доступных для аренды вещей, соответствующих запросу
      */
     @GetMapping("/search")
-    public ResponseEntity<Object> search(@RequestHeader("X-Sharer-User-Id") long userId,
+    public ResponseEntity<Object> search(@Positive @RequestHeader("X-Sharer-User-Id") long userId,
                                          @RequestParam(name = "text", defaultValue = "") String text,
                                          @PositiveOrZero @RequestParam(name = "from", defaultValue = "0") Integer from,
                                          @Positive @RequestParam(name = "size", defaultValue = "10") Integer size) {
@@ -112,8 +112,8 @@ public class ItemController {
      * @return dto объект комментария
      */
     @PostMapping("/{itemId}/comment")
-    public ResponseEntity<Object> addComment(@RequestHeader("X-Sharer-User-Id") long userId,
-                                             @PathVariable("itemId") Long itemId,
+    public ResponseEntity<Object> addComment(@Positive @RequestHeader("X-Sharer-User-Id") long userId,
+                                             @Positive @PathVariable("itemId") Long itemId,
                                              @RequestBody @Valid CommentDto commentDto) {
         log.info("Comment for itemId={}, userId={} has been created", itemId, userId);
         return itemClient.addComment(userId, itemId, commentDto);

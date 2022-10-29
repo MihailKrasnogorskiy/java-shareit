@@ -7,9 +7,10 @@ import org.springframework.stereotype.Controller;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.dto.UserUpdate;
+import ru.practicum.shareit.user.dto.UserUpdateDto;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Positive;
 
 @Controller
 @RequestMapping("/users")
@@ -38,8 +39,9 @@ public class UserController {
      * @return dto объект пользователя
      */
     @PatchMapping("/{id}")
-    public ResponseEntity<Object> update(@PathVariable("id") Long userId, @RequestBody UserUpdate updatedUser) {
-        log.info("SUser with userId={} has been updated", userId);
+    public ResponseEntity<Object> update(@Positive @PathVariable("id") Long userId,
+                                         @Valid @RequestBody UserUpdateDto updatedUser) {
+        log.info("User with userId={} has been updated", userId);
         return userClient.update(userId, updatedUser);
     }
 
@@ -50,7 +52,7 @@ public class UserController {
      * @return dto объект пользователя
      */
     @GetMapping("/{id}")
-    public ResponseEntity<Object> getById(@PathVariable("id") Long userId) {
+    public ResponseEntity<Object> getById(@Positive @PathVariable("id") Long userId) {
         log.info("Find user by userId={} is successful", userId);
         return userClient.getById(userId);
     }
@@ -61,7 +63,7 @@ public class UserController {
      * @param userId - id пользователя
      */
     @DeleteMapping("/{id}")
-    public ResponseEntity<Object> delete(@PathVariable("id") Long userId) {
+    public ResponseEntity<Object> delete(@Positive @PathVariable("id") Long userId) {
         log.info("Delete user by userId={} is successful", userId);
         return userClient.deleteById(userId);
     }

@@ -9,7 +9,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.util.DefaultUriBuilderFactory;
 import ru.practicum.shareit.client.BaseClient;
 import ru.practicum.shareit.user.dto.UserDto;
-import ru.practicum.shareit.user.dto.UserUpdate;
+import ru.practicum.shareit.user.dto.UserUpdateDto;
 
 /**
  * клиент для отправки запросов в UserController shareIt-server
@@ -44,7 +44,7 @@ public class UserClient extends BaseClient {
      * @param userId id пользователя
      * @return dto объект пользователя
      */
-    public ResponseEntity<Object> update(long userId, UserUpdate userDto) {
+    public ResponseEntity<Object> update(long userId, UserUpdateDto userDto) {
         return patch("/" + userId, userDto);
     }
 
